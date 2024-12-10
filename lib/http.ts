@@ -107,12 +107,8 @@ const http = {
     ) {
         return request<Response>("PUT", url, { ...options, body });
     },
-    delete<Response>(
-        url: string,
-        body: any,
-        options?: Omit<CustomRequestInit, "body">,
-    ) {
-        return request<Response>("DELETE", url, { ...options, body });
+    delete<Response>(url: string, options?: Omit<CustomRequestInit, "body">) {
+        return request<Response>("DELETE", url, { ...options });
     },
 };
 

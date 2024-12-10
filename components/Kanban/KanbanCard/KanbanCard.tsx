@@ -1,8 +1,5 @@
-import { getUserData } from "@/api/user";
-import { getWorkSpace, onSnapshotWorkSpace } from "@/api/workSpace";
-import { FireStoreCollections } from "@/constants/FirebaseConstants";
+import { api_getAllCardsOfColumn, api_createCard, api_updateCard, api_deleteCard, api_moveCard} from "@/api/card";
 import { useI18n } from "@/contexts/i18n/i18nProvider";
-import { useAuth } from "@/hooks/useAuth";
 import { KanbanType } from "@/types/enum";
 import { UserDataType } from "@/types/UserDataType";
 import {
@@ -22,12 +19,11 @@ import cn from "classnames";
 import Image from 'next/image';
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { Card, Id } from "../../../types/KanBanType";
+import { CardType, Id } from "../../../types/KanBanType";
 import ModalEditCard from "./ModalEdit";
-import { Unsubscribe } from "firebase/firestore";
 import dayjs from "dayjs";
 interface CardProps {
-    card: Card;
+    card: CardType;
     deleteCard: (id: Id) => void;
     containerStyle?: React.CSSProperties;
     workspaceId: string;
@@ -38,7 +34,7 @@ const KanbanCard = ({
     containerStyle,
     workspaceId
 }: CardProps) => {
-    const { user } = useAuth();
+    // const { user } = useAuth();
     const pathName = usePathname();
     const i18n = useI18n(pathName.split("/")[1]);
     const token = useToken();
@@ -60,72 +56,40 @@ const KanbanCard = ({
     const [openPopover, setOpenPopover] = useState(false);
     const [openModal, setOpenModal] = useState(false);
 
-    useEffect(() => {
-        const unsubscribe: Unsubscribe = onSnapshotWorkSpace(
-            () => {
-                workSpace.refetch()
-            }, workspaceId
-        )
-        return () => {
-            unsubscribe?.()
-        }
-    }, [workspaceId])
+    // useEffect(() => {
+    //     const unsubscribe: Unsubscribe = onSnapshotWorkSpace(
+    //         () => {
+    //             workSpace.refetch()
+    //         }, workspaceId
+    //     )
+    //     return () => {
+    //         unsubscribe?.()
+    //     }
+    // }, [workspaceId])
 
-    const workSpace = useQuery({
-        queryKey: [FireStoreCollections.WORKSPACES],
-        queryFn: async () => {
-            return await getWorkSpace(workspaceId);
-        }
-    })
-    const members = useQuery({
-        queryKey: [workSpace],
-        queryFn: async () => {
-            if (!workSpace.data?.members) return [];
-            const members = await Promise.all(workSpace.data.members.map(async (member) => {
-                return (await getUserData(member))
-            }))
-            members.push({
-                id: workSpace.data.owner.id,
-                name: workSpace.data.owner.name,
-                imageUri: workSpace.data.owner.imageUri,
-                email: workSpace.data.owner.email,
-            })
-            return members
-        }
-    })
+    // const workSpace = useQuery({
+    //     queryKey: [FireStoreCollections.WORKSPACES],
+    //     queryFn: async () => {
+    //         return await getWorkSpace(workspaceId);
+    //     }
+    // })
+    // const members = useQuery({
+    //     queryKey: [workSpace],
+    //     queryFn: async () => {
+    //         if (!workSpace.data?.members) return [];
+    //         const members = await Promise.all(workSpace.data.members.map(async (member) => {
+    //             return (await getUserData(member))
+    //         }))
+    //         members.push({
+    //             id: workSpace.data.owner.id,
+    //             name: workSpace.data.owner.name,
+    //             imageUri: workSpace.data.owner.imageUri,
+    //             email: workSpace.data.owner.email,
+    //         })
+    //         return members
+    //     }
+    // })
 
-    const [assignMember, setAssignMember] = React.useState<UserDataType>()
-    useEffect(() => {
-        if (card.assigneeId) {
-            const member = members.data?.filter((member) => member.id === card.assigneeId) || undefined
-            if (member) {
-                setAssignMember(member[0])
-            }
-        }
-    }, [card.assigneeId, members.data])
-    useEffect(() => {
-        if (card.assigneeId) {
-            const member = members.data?.filter((member) => member.id === card.assigneeId) || undefined
-            if (member) {
-                setAssignMember(member[0])
-            }
-        }
-    }, [card.assigneeId, members.data])
-
-    if (user) {
-        let isAccessible = false
-        workSpace.data?.members.forEach((member) => {
-            if (member === user.uid) {
-                isAccessible = true
-            }
-        })
-        if (workSpace.data?.owner.id === user.uid) {
-            isAccessible = true
-        }
-        if (!isAccessible) {
-            return null
-        }
-    }
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -216,7 +180,7 @@ const KanbanCard = ({
                     </Button>
                 </Popover>
             </Row>
-            <Space direction="vertical">
+            {/* <Space direction="vertical">
                 <Row justify={'start'} className="w-full">
                     <Tag color={
                         card.tasks.filter((task) => task.isDone).length === card.tasks.length ? 'green' : 'red'
@@ -291,7 +255,7 @@ const KanbanCard = ({
                         members={members}
                     />
                 )
-            }
+            } */}
         </div>
     );
 };

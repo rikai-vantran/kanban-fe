@@ -4,20 +4,17 @@ export interface Task {
     isDone: boolean;
 }
 
-export type Column = {
-    id: Id;
-    columnIndex: number;
-    title: string;
-    workspaceId: Id;
-    cards: Id[];
+export type ColumnType = {
+    id: string;
+    name: string;
+    workspace_id: Id;
+    card_orders: Id[];
 };
 
-export type Card = {
-    id: Id;
-    columnId: Id;
-    cardIndex: number;
+export type CardType = {
+    id: string;
+    column_id: string;
     content: string;
     dueDate?: string;
     assigneeId: string;
-    tasks: Task[];
 };

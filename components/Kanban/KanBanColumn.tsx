@@ -8,17 +8,18 @@ import { Button, Divider, Input, Popover, Space } from "antd";
 import useToken from "antd/es/theme/useToken";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Card, Column, Id } from "../../types/KanBanType";
+import { CardType, ColumnType, Id } from "../../types/KanBanType";
 import KanbanCard from "./KanbanCard/KanbanCard";
 import { useTheme } from "@/contexts/Theme/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
+import { api_createCard } from "@/api/card";
 
 interface ColumnProps {
-    column: Column;
-    cards: Card[];
+    column: ColumnType;
+    cards: CardType[];
     deleteColumn: (id: Id) => void;
-    updateColumn: (id: Id, title: string, index: number) => void;
+    updateColumn: (id: Id, title: string) => void;
     createCard: (id: Id) => Promise<void>;
     deleteCard: (id: Id) => void;
     workspaceId: string;
@@ -31,7 +32,7 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
     const token = useToken()
     const [isEdit, setIsEdit] = useState(false);
     const cardsId = useMemo(() => cards.map((card) => card.id), [cards],);
-    const [columTitle, setColumnTitle] = useState(column.title);
+    const [columName, setColumnName] = useState(column.name);
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging, } = useSortable(
         {
@@ -49,9 +50,9 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
     };
 
     const createCardMutation = useMutation({
-        mutationFn: (id: Id) => {
-            return createCard(id)
-        },
+        mutationFn: async () => {
+            await api_createCard(column.id, 'New Card')
+        }
     })
 
     if (isDragging) {
@@ -98,17 +99,17 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
                         style={{
                             fontWeight: 'bold'
                         }}
-                        value={columTitle}
+                        value={columName}
                         onBlur={(e) => {
                             setIsEdit(false);
-                            updateColumn(column.id, e.target.value, column.columnIndex)
+                            updateColumn(column.id, e.target.value)
 
                         }}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") setIsEdit(false);
                         }}
                         onChange={(e) =>
-                                setColumnTitle(e.target.value)
+                                setColumnName(e.target.value)
                         }
                     />) : (<Input
                         size="large"
@@ -120,14 +121,14 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
                         onClick={() => setIsEdit(true)}
                         variant="borderless"
                         type="text"
-                        value={column.title}
+                        value={column.name}
                         onBlur={() => setIsEdit(false)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") setIsEdit(false);
                         }}
-                        onChange={(e) =>
-                            updateColumn(column.id, e.target.value, column.columnIndex)
-                        }
+                        // onChange={(e) =>
+                        //     updateColumn(column.id, e.target.value, column.columnIndex)
+                        // }
                     />)}
                     <Popover
                         style={{

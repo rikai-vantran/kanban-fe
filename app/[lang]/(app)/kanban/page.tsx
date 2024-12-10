@@ -1,13 +1,16 @@
 "use client";
 import { api_getAllCardsOfColumn, api_createCard, api_updateCard, api_deleteCard, api_moveCard } from "@/api/card";
 import { api_createColumn, api_deleteColumn, api_getAllColumnsOfAWorkSpace, api_updateColumn } from "@/api/column";
+
+
 import KanbanColumn from "@/components/Kanban/KanBanColumn";
 import KanbanCard from "@/components/Kanban/KanbanCard/KanbanCard";
+
 import { useTheme } from "@/contexts/Theme/ThemeProvider";
 import { useI18n } from "@/contexts/i18n/i18nProvider";
 import { useAuth } from "@/contexts/Auth/AuthProvider";
 import { cn } from "@/lib/utils";
-import { CardType, ColumnType, Id } from "@/types/KanBanType";
+import { Card, Column, Id } from "@/types/KanBanType";
 import { KanbanType } from "@/types/enum";
 import { FilterFilled, FilterOutlined, InfoCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { DndContext, DragOverEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
@@ -21,7 +24,8 @@ import { Emoji } from "emoji-picker-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { get } from "http";
+import { getAllWorkSpaces } from "@/api/workSpace";
+
 
 interface Props {
     params: {
@@ -35,41 +39,34 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
     const { themeApp } = useTheme();
     const [openSettings, setOpenSettings] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
-    const [columns, setColumns] = useState<ColumnType[]>([]);
-    const [cards, setCards] = useState<CardType[]>([]);
+    const [columns, setColumns] = useState<Column[]>([]);
+    const [cards, setCards] = useState<Card[]>([]);
 
     const [filterAssignee, setFilterAssignee] = useState<string[]>([]);
     const [filterDueDate, setFilterDueDate] = useState<boolean>(false);
     const [searchValue, setSearchValue] = useState<string>("");
 
-    const columsId = useMemo(
-        () => columns.map((column) => column.id),
-        [columns],
-    );
-    const getColumns = async () => {
-        const rs = await api_getAllColumnsOfAWorkSpace("10");
-        setColumns(rs.payload);
-    };
+    const columsId = useMemo(() => columns.map((column) => column.id),[columns],);
 
-    const getCards = async () => {
-        const rs = await api_getAllCardsOfColumn("7");
-        setCards(rs.payload);
-        setColumns((columns) => {
-            return columns.map((column) => {
-                return {
-                    ...column,
-                    card_orders: rs.payload.map((card) => card.id),
-                };
-            });
-        });
-    };
+    const {signOut} = useAuth()
+
+    function getAllColumnsOfWorkspace(workspaceId: string) {
+        const rs = api_getAllColumnsOfAWorkSpace(workspaceId)
+        console.log(rs)
+    }
+
     useEffect(() => {
-        getColumns();
-        getCards();
-    }, []);
+        (async () => {
+            const rs = await getAllColumnsOfWorkspace('11')
+        })()
+    })
 
-    const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
-    const [activeCard, setActiveCard] = useState<CardType | null>(null);
+
+
+
+
+    const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+    const [activeCard, setActiveCard] = useState<Card | null>(null);
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -80,13 +77,20 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
 
     const createColumnMutation = useMutation({
         mutationFn: async () => {
-            await api_createColumn("10", "New Column");
-            getColumns();
+            // const newColumn: Column = {
+            //     id: Math.random(),
+            //     title: `Column ${columns.length + 1}`,
+            //     columnIndex: columns.length,
+            //     workspaceId: workSpaceId,
+            //     cards: [],
+            // };
+            // await api_createColumn(newColumn);
+            // const data = await getAllColumnsOfWorkspace(workSpaceId);
+            // setColumns(data);
         },
     });
 
     function deleteColumn(id: Id) {
-        console.log("delete column", id);
 
         const newColumns = columns.filter((column) => column.id !== id);
         setColumns(newColumns);
@@ -137,16 +141,13 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
                     const activeIndex = cards.findIndex(
                         (card) => card.id === activeId,
                     );
-                    const overIndex = cards.findIndex(
-                        (card) => card.id === overId,
-                    );
-                    cards[activeIndex].column_id = cards[overIndex].column_id;
+                    const overIndex = cards.findIndex((card) => card.id === overId);
+                    cards[activeIndex].columnId = cards[overIndex].columnId;
                     return arrayMove(cards, activeIndex, overIndex);
                 });
-            }, 10);
+            }, 10)
         }
-        const isActiveColumn =
-            active.data.current.type === KanbanType.KanbanColumn;
+        const isActiveColumn = active.data.current.type === KanbanType.KanbanColumn;
         const isOverColumn = over.data.current.type === KanbanType.KanbanColumn;
         if (isActiveColumn && isOverColumn) {
             setTimeout(() => {
@@ -158,26 +159,40 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
                         (column) => column.id === overId,
                     );
                     return arrayMove(columns, activeIndex, overIndex);
-                });
-            }, 10);
+                }
+                );
+            }, 10)
         }
     }
 
-    async function updateColumnName(id: Id, name: string) {
+    async function updateColumnTitle(id: Id, title: string) {
         setColumns((columns) =>
             columns.map((column) => {
                 if (column.id === id) {
-                    return { ...column, name };
+                    return { ...column, title };
                 }
                 return column;
             }),
         );
-        await api_updateColumn(id.toString(), name);
+        // await updateColumnTitleAPI(id, title);
     }
 
     async function createCard(id: Id) {
-        const rs = await api_createCard(id.toString(), "New card");
-        getCards();
+        // const cardsAPI = await getCardOfWorkspaceAPI(workSpaceId);
+        // const newCard: Card = {
+        //     id: Math.random(),
+        //     columnId: id,
+        //     cardIndex: cards.length,
+        //     content: `Card ${cardsAPI.length + 1}`,
+        //     dueDate: dayjs().add(1, "day").format("DD/MM/YYYY"),
+        //     assigneeId: userData.data?.id ?? "",
+        //     tasks: [],
+        // };
+
+        // addIDCardToColumnAPI(id, newCard.id);
+        // addCardAPI(newCard);
+        // const data = await getCardOfWorkspaceAPI(workSpaceId);
+        // setCards(data);
     }
 
     function deleteCard(id: Id) {
@@ -192,6 +207,7 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
         //     getColumnsAPI(workSpaceId),
         //     getCardOfWorkspaceAPI(workSpaceId),
         // ]);
+
         // if (filterAssignee.length > 0) {
         //     cards = cards.filter((card) => filterAssignee.includes(card.assigneeId));
         // }
@@ -206,7 +222,7 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
     }
     useEffect(() => {
         refreshData();
-    }, [filterAssignee, filterDueDate, searchValue]);
+    }, [filterAssignee, filterDueDate, searchValue])
     // useEffect(() => {
     //     const unsubscribeCards: Unsubscribe[] = [];
     //     const unsubscribe = onSnapshotColumns(() => {
@@ -253,11 +269,9 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
                     </Space> */}
                     <Space direction="horizontal" align="center">
                         <div className="flex">
-                            <Avatar.Group
-                                max={{
-                                    count: 3,
-                                }}
-                            >
+                            <Avatar.Group max={{
+                                count: 3,
+                            }}>
                                 {/* {
                                     members.data?.map((member) => (
                                         <Avatar
@@ -275,15 +289,11 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
                         <Button
                             type="text"
                             icon={
-                                filterAssignee.length > 0 || filterDueDate ? (
-                                    <FilterFilled
-                                        style={{
-                                            color: token[3].colorPrimary,
-                                        }}
-                                    />
-                                ) : (
-                                    <FilterOutlined />
-                                )
+                                (filterAssignee.length > 0 || filterDueDate) ? <FilterFilled
+                                    style={{
+                                        color: token[3].colorPrimary,
+                                    }}
+                                /> : <FilterOutlined />
                             }
                             onClick={() => setOpenFilter(true)}
                         >
@@ -328,13 +338,12 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
                                         key={column.id}
                                         column={column}
                                         deleteColumn={deleteColumn}
-                                        updateColumn={updateColumnName}
+                                        updateColumn={updateColumnTitle}
                                         createCard={createCard}
                                         cards={cards.filter(
                                             (card) =>
-                                                card.column_id == column.id,
-                                        )
-                                        }
+                                                card.columnId === column.id,
+                                        )}
                                         deleteCard={deleteCard}
                                         workspaceId={workSpaceId}
                                     />
@@ -364,11 +373,11 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
                                 <KanbanColumn
                                     column={activeColumn}
                                     deleteColumn={deleteColumn}
-                                    updateColumn={updateColumnName}
+                                    updateColumn={updateColumnTitle}
                                     createCard={createCard}
                                     cards={cards.filter(
                                         (card) =>
-                                            card.column_id === activeColumn.id,
+                                            card.columnId === activeColumn.id,
                                     )}
                                     deleteCard={deleteCard}
                                     workspaceId={workSpaceId}
@@ -408,16 +417,6 @@ const KanbanBoard = ({ params: { workSpaceId } }: Props) => {
                 />
             )} */}
             {/* // Drawer for workspace settings */}
-
-            <button
-                onClick={() => {
-                    cards.map((card) => {
-                        console.log(card.column_id);
-                    });
-                }}
-            >
-                Click me
-            </button>
         </Layout>
     );
 };
