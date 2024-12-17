@@ -71,7 +71,7 @@ const request = async <Response>(
         method: method,
     });
 
-    const payload: Response = await response.json();
+    const payload: Response = response.status !== 204 ? await response.json() : null;
     const data = {
         status: response.status,
         payload,

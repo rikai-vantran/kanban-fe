@@ -1,93 +1,110 @@
 
 import { useI18n } from '@/contexts/i18n/i18nProvider';
-import { Card, Id, Task } from '@/types/KanBanType';
+import { CardType, Id, Task } from '@/types/KanBanType';
 import { UserDataType } from '@/types/UserDataType';
 import { CloudUploadOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { DefinedQueryObserverResult, useMutation } from '@tanstack/react-query';
+import { api_getAllCardsOfColumn, api_createCard, api_updateCard, api_deleteCard, api_moveCard } from "@/api/card";
 import { Button, Checkbox, DatePicker, Divider, Input, List, message, Modal, Popover, Row, Space, Tag, Tooltip, Typography } from 'antd';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import React, { useEffect } from 'react';
+import { use } from 'framer-motion/client';
 
 interface ModalEditCardProps {
     open: boolean;
     onClose: () => void;
-    card: Card;
-    members: DefinedQueryObserverResult<UserDataType[], Error>;
+    card: CardType;
+    // members: DefinedQueryObserverResult<UserDataType[], Error>;
 }
 
 function ModalEditCard({
     open,
     onClose,
     card,
-    members,
+    // members,
 }: ModalEditCardProps) {
     const pathName = usePathname();
     const i18n = useI18n(pathName.split("/")[1]);
     const [popoverAssignVisible, setPopoverAssignVisible] = React.useState(false);
     const [cardName, setCardName] = React.useState(card.content);
     const [taskContent, setTaskContent] = React.useState('');
-    const [tasks, setTasks] = React.useState<Task[]>(card.tasks);
+    // const [tasks, setTasks] = React.useState<Task[]>(card.tasks);
 
     const editCardName = useMutation({
-        mutationFn: async (name: string) => {
-            await updateCardAPI(
+        mutationFn: async (content: string) => {
+            await api_updateCard(
                 card.id,
-                name
+                content,
+                card.due_date || ''
             )
+
         }
     })
+
     const editDueDate = useMutation({
         mutationFn: async (date: string) => {
-            await updateDueDateAPI(
+            await api_updateCard(
                 card.id,
+                card.content,
                 date
             )
         }
     })
-    const assignCard = useMutation({
-        mutationFn: async ({ cardId, assignId }: {
-            cardId: Id,
-            assignId: string
-        }) => {
-            await updateAssignAPI(
-                cardId,
-                assignId
-            )
-        }
-    })
-    const addTaskMutation = useMutation({
-        mutationFn: async (tasks: Task[]) => {
-            await addTasksAPI(
-                card.id,
-                tasks
-            )
-        }
-    })
+    // const editDueDate = useMutation({
+    //     mutationFn: async (date: string) => {
+    //         await updateDueDateAPI(
+    //             card.id,
+    //             date
+    //         )
+    //     }
+    // })
+    // const assignCard = useMutation({
+    //     mutationFn: async ({ cardId, assignId }: {
+    //         cardId: Id,
+    //         assignId: string
+    //     }) => {
+    //         await updateAssignAPI(
+    //             cardId,
+    //             assignId
+    //         )
+    //     }
+    // })
+    // const addTaskMutation = useMutation({
+    //     mutationFn: async (tasks: Task[]) => {
+    //         await addTasksAPI(
+    //             card.id,
+    //             tasks
+    //         )
+    //     }
+    // })
 
-    useEffect(() => {
-        addTaskMutation.mutate(tasks)
-    }, [tasks])
+    // useEffect(() => {
+    //     addTaskMutation.mutate(tasks)
+    // }, [tasks])
 
-    const [assignMember, setAssignMember] = React.useState<UserDataType>()
-    const [dueDate, setDueDate] = React.useState(dayjs(card.dueDate, 'DD/MM/YYYY'))
-    useEffect(() => {
-        if (card.dueDate) {
-            setDueDate(dayjs(card.dueDate, 'DD/MM/YYYY'))
-        }
-        if (card.tasks) {
-            setTasks(card.tasks)
-        }
-    }, [card])
-    useEffect(() => {
-        if (card.assigneeId) {
-            const member = members.data?.filter((member) => member.id === card.assigneeId) || undefined
-            if (member) {
-                setAssignMember(member[0])
-            }
-        }
-    }, [card.assigneeId, members.data])
+    // const [assignMember, setAssignMember] = React.useState<UserDataType>()
+    // const [dueDate, setDueDate] = React.useState(dayjs(card.dueDate, 'DD/MM/YYYY'))
+    // useEffect(() => {
+    //     if (card.dueDate) {
+    //         setDueDate(dayjs(card.dueDate, 'DD/MM/YYYY'))
+    //     }
+    //     if (card.tasks) {
+    //         setTasks(card.tasks)
+    //     }
+    // }, [card])
+    // useEffect(() => {
+    //     if (card.assigneeId) {
+    //         const member = members.data?.filter((member) => member.id === card.assigneeId) || undefined
+    //         if (member) {
+    //             setAssignMember(member[0])
+    //         }
+    //     }
+    // }, [card.assigneeId, members.data])
+    const [dueDate, setDueDate] = React.useState(dayjs(card.due_date, 'YYYY/MM/DD'))
+
+
 
     return (
         <Modal
@@ -121,7 +138,7 @@ function ModalEditCard({
                 <Row justify={'space-between'}>
                     <Space direction='vertical'>
                         <Typography.Title level={5}>{i18n.Card['Assign to']}</Typography.Title>
-                        <Space size={'small'}>
+                        {/* <Space size={'small'}>
                             {
                                 assignMember && (
                                     <Tooltip
@@ -186,17 +203,18 @@ function ModalEditCard({
                                     icon={<PlusOutlined />}
                                 />
                             </Popover>
-                        </Space>
+                        </Space> */}
                     </Space>
                     <Space direction='vertical'>
                         <Typography.Title level={5}>{i18n.Card['Due date']}</Typography.Title>
                         <DatePicker
                             value={
-                                dueDate
+                               dueDate
                             }
                             onChange={(date) => {
                                 setDueDate(date);
-                                editDueDate.mutate(date?.format('DD/MM/YYYY') || '');
+                                console.log(date)
+                                editDueDate.mutate(date?.format('YYYY/MM/DD') || '');
                             }}
                         />
                     </Space>
@@ -204,7 +222,7 @@ function ModalEditCard({
                 <Space direction='vertical' className='w-full'>
                     <Typography.Title level={5}>{i18n.Card['Tasks']}</Typography.Title>
                     <Space direction='vertical' className='w-full'>
-                        {tasks.map((task, index) => (
+                        {/* {tasks.map((task, index) => (
                             <Row key={index} className='w-full' justify={'space-between'} align={'middle'}>
                                 <Checkbox value={task.isDone} defaultChecked={
                                     task.isDone
@@ -239,7 +257,7 @@ function ModalEditCard({
                                     icon={<DeleteOutlined />}
                                 />
                             </Row>
-                        ))}
+                        ))} */}
                     </Space>
                     <Space.Compact className='w-full mt-1'>
                         <Input value={taskContent} onChange={(e) => {
@@ -247,7 +265,7 @@ function ModalEditCard({
                         }}
                             placeholder={i18n.Card['Add task']}
                         />
-                        <Button
+                        {/* <Button
                             onClick={() => {
                                 let isValid = true;
                                 if (taskContent === '') {
@@ -270,7 +288,7 @@ function ModalEditCard({
                             }}
                             type='primary' icon={
                                 <CloudUploadOutlined />
-                            } />
+                            } /> */}
                     </Space.Compact>
                 </Space>
             </Space>

@@ -9,4 +9,5 @@ export interface WorkSpaceType {
     owner: UserDataType,
     icon_unified: string,
     created_at?: Timestamp,
+    column_orders: string[],
 }

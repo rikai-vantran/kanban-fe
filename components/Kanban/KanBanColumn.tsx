@@ -13,7 +13,6 @@ import KanbanCard from "./KanbanCard/KanbanCard";
 import { useTheme } from "@/contexts/Theme/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import { api_createCard } from "@/api/card";
 
 interface ColumnProps {
     column: ColumnType;
@@ -25,7 +24,7 @@ interface ColumnProps {
     workspaceId: string;
 }
 
-const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, deleteCard, workspaceId }: ColumnProps) => {
+const KanbanColumn = ({ column, deleteColumn, createCard, cards, deleteCard,updateColumn,workspaceId }: ColumnProps) => {
     const { themeApp } = useTheme()
     const pathName = usePathname();
     const i18n = useI18n(pathName.split('/')[1]);
@@ -51,7 +50,7 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
 
     const createCardMutation = useMutation({
         mutationFn: async () => {
-            await api_createCard(column.id, 'New Card')
+            await createCard(column.id)
         }
     })
 
@@ -72,7 +71,7 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
     }
 
     return (
-        <div className="h-full"
+        <div className="h-full w-[300px] flex flex-col rounded-lg overflow-x-hidden pt-2 pb-2"
             ref={setNodeRef}
         >
             <div
@@ -85,7 +84,7 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
                     maxHeight: '100%',
                     ...style
                 }}
-                className="min-w-[300px] flex flex-col rounded-lg overflow-x-hidden pt-2 pb-2"
+                className="min-w-[00px] flex flex-col rounded-lg overflow-x-hidden pt-2 pb-2"
             >
                 <div
                     {...attributes}
@@ -191,7 +190,7 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
                     'pt-4': cards.length !== 0,
                 })}
                     style={{
-                        maxHeight: 'calc(100% - 128px)',
+                        maxHeight: 'calc(100% - 50px)',
                         overflowY: 'auto',
                     }}
                 >
@@ -213,7 +212,7 @@ const KanbanColumn = ({ column, deleteColumn, updateColumn, createCard, cards, d
                     marginBottom: 0,
                 }} />
                 <Button
-                    onClick={() => createCardMutation.mutate(column.id)}
+                    onClick={() => createCardMutation.mutate()}
                     type="primary"
                     className="mt-4 mx-4"
                     title="Add Card"

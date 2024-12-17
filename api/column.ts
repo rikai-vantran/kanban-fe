@@ -42,3 +42,18 @@ export const api_moveColumn = async (
     return res
 }
 
+// export const api_updateCardOrders = async (
+//     colActiveId: string,
+//     colOverId: string,
+//     cardOrdersActive: string[],
+//     cardOrdersOver: string[]
+// ) => {
+//     const res = await http.put(`/api/kanban_board/card_order/`, {
+//         colActiveId: colActiveId,
+//         colOverId: colOverId,
+//         cardOrdersActive: cardOrdersActive,
+//         cardOrdersOver: cardOrdersOver
+//     })
+//     return res
+// }
+

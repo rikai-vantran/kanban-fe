@@ -55,7 +55,7 @@ const KanbanCard = ({
 
     const [openPopover, setOpenPopover] = useState(false);
     const [openModal, setOpenModal] = useState(false);
-
+    const [isEdit, setIsEdit] = useState(true);
     // useEffect(() => {
     //     const unsubscribe: Unsubscribe = onSnapshotWorkSpace(
     //         () => {
@@ -180,16 +180,16 @@ const KanbanCard = ({
                     </Button>
                 </Popover>
             </Row>
-            {/* <Space direction="vertical">
+            <Space direction="vertical">
                 <Row justify={'start'} className="w-full">
-                    <Tag color={
+                    {/* <Tag color={
                         card.tasks.filter((task) => task.isDone).length === card.tasks.length ? 'green' : 'red'
                     }>
                         <TagsOutlined /> {' '}
                         {
                             `${card.tasks.filter((task) => task.isDone).length} / ${card.tasks.length}`
                         }
-                    </Tag>
+                    </Tag> */}
                 </Row>
                 <Row justify={"space-between"} className="mt-2">
                     <Space
@@ -203,20 +203,20 @@ const KanbanCard = ({
                     >
                         <Tag
                             color={
-                                dayjs(card.dueDate, "DD/MM/YYYY").isBefore(dayjs()) ? 'red' : 'blue'
+                                dayjs(card.due_date, "DD/MM/YYYY").isBefore(dayjs()) ? 'red' : 'blue'
                             }
                         >
                             {
-                                dayjs(card.dueDate, "DD/MM/YYYY").isBefore(dayjs()) ? (
+                                dayjs(card.due_date, "DD/MM/YYYY").isBefore(dayjs()) ? (
                                     <FireOutlined />
                                 ) : (
                                     <ClockCircleOutlined />
                                 )
                             }
                             {' '}
-                            {card.dueDate}
+                            {card.due_date}
                         </Tag>
-                        {
+                        {/* {
                             card.assigneeId && assignMember && (
                                 <Tooltip
                                     title={assignMember.name}
@@ -228,8 +228,8 @@ const KanbanCard = ({
                                     />
                                 </Tooltip>
                             )
-                        }
-                        {
+                        } */}
+                        {/* {
                             card.assigneeId && !assignMember && (
                                 <Tooltip
                                     title={i18n.Common['Unknown']}
@@ -241,21 +241,29 @@ const KanbanCard = ({
                                     />
                                 </Tooltip>
                             )
-                        }
+                        } */}
                     </Space>
                 </Row>
             </Space>
 
             {
-                workSpace.data && members.data && (
+                // workSpace.data && members.data && (
+                //     <ModalEditCard
+                //         open={openModal}
+                //         onClose={() => setOpenModal(false)}
+                //         card={card}
+                //         members={members}
+                //     />
+                // )
+                   isEdit && (
                     <ModalEditCard
                         open={openModal}
                         onClose={() => setOpenModal(false)}
                         card={card}
-                        members={members}
+                        // members={members}
                     />
                 )
-            } */}
+            }
         </div>
     );
 };
