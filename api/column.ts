@@ -1,6 +1,6 @@
 import http from "@/lib/http"
 import { WorkSpaceType } from "@/types/WorkSpaceType"
-import { ColumnType } from "@/types/KanBanType"
+import { CardType, ColumnType } from "@/types/KanBanType"
 
 export const api_getAllColumnsOfAWorkSpace = async (workspaceId: string) => {
     const res = await http.get<ColumnType[]>(`/api/kanban_board/kanban_column/?workspace_id=${workspaceId}`)
@@ -42,18 +42,31 @@ export const api_moveColumn = async (
     return res
 }
 
-// export const api_updateCardOrders = async (
-//     colActiveId: string,
-//     colOverId: string,
-//     cardOrdersActive: string[],
-//     cardOrdersOver: string[]
-// ) => {
-//     const res = await http.put(`/api/kanban_board/card_order/`, {
-//         colActiveId: colActiveId,
-//         colOverId: colOverId,
-//         cardOrdersActive: cardOrdersActive,
-//         cardOrdersOver: cardOrdersOver
-//     })
-//     return res
-// }
+
+
+export const api_updateCardOrder = async (
+    colOverId: string,
+    activeCardId: string,
+    cardOrdersActive: string[]
+) => {
+    const res = await http.put(`api/kanban_board/update-card-order/`, {
+        over_column_id: colOverId,
+        active_card_id: activeCardId,
+        card_orders: cardOrdersActive
+    });
+    return res;
+};
+
+export const api_updateCardToNewColumn = async (
+    colOverId: string,
+    activeCardId: string
+) => {
+    const res = await http.put(`api/kanban_board/update-card-to-new-column/`, {
+        over_column_id: colOverId,
+        active_card_id: activeCardId
+    });
+    return res;
+}
+
+
 

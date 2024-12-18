@@ -104,7 +104,7 @@ const KanbanCard = ({
                     backgroundColor: token[3].colorBgLayout,
                     ...style,
                 }}
-                className="flex justify-between items-center h-[96px] p-2 rounded-lg mb-2 border-2 gap-2"
+                className="relative justify-between items-center h-[96px] p-2 rounded-lg mb-2 border-2 gap-2 opacity-20"
             ></div>
         );
     }
@@ -123,7 +123,7 @@ const KanbanCard = ({
         >
             <Row justify={"space-between"} className="h-full">
                 <Typography.Title level={5}>
-                    {card.content}
+                    {card.id}
                 </Typography.Title>
                 <Popover
                     style={{

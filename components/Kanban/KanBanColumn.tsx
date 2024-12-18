@@ -30,7 +30,7 @@ const KanbanColumn = ({ column, deleteColumn, createCard, cards, deleteCard,upda
     const i18n = useI18n(pathName.split('/')[1]);
     const token = useToken()
     const [isEdit, setIsEdit] = useState(false);
-    const cardsId = useMemo(() => cards.map((card) => card.id), [cards],);
+    const cardsId = useMemo(() => cards.map((card) => card.id), [cards]);
     const [columName, setColumnName] = useState(column.name);
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging, } = useSortable(
@@ -120,7 +120,7 @@ const KanbanColumn = ({ column, deleteColumn, createCard, cards, deleteCard,upda
                         onClick={() => setIsEdit(true)}
                         variant="borderless"
                         type="text"
-                        value={column.name}
+                        value={column.id}
                         onBlur={() => setIsEdit(false)}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") setIsEdit(false);

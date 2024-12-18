@@ -16,5 +16,5 @@ export type CardType = {
     column_id: string;
     content: string;
     due_date?: string;
-    assigneeId: string;
+    assign: number;
 };
