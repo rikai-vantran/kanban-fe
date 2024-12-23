@@ -1,5 +1,5 @@
 "use client";
-import http from "@/lib/http";
+import http, { HTTPResponseType } from "@/lib/http";
 import * as React from "react";
 import { accessToken, refreshToken } from "@/lib/http";
 
@@ -10,6 +10,7 @@ export interface AuthProviderProps {
 }
 
 import { createContext, useContext } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export interface AuthContextValue {
     signIn: (username: string, password: string) => Promise<void>;
@@ -24,6 +25,9 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({
     access,
     refresh
 }) => {
+    const router = useRouter()
+    const pathName = usePathname();
+    const lang = pathName.split('/')[1];
     React.useState(() => {
         if (access && refresh) {
             accessToken.value = access
@@ -35,11 +39,12 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({
         <AuthContext.Provider
             value={{
                 signIn: async (username: string, password: string) => {
-                    const rs = await http.post<{
-                        access: string;
-                        refresh: string;
-                    }>('/auth/login/', { username, password })
-                    await fetch(`${process.env.NEXT_PUBLIC_NEXTSERVER_URL}/api/auth/login`, {
+                    const rs = await http.post<{access: string;refresh: string;}>
+                    (
+                        '/auth/login/', 
+                        { username, password }
+                    )
+                    await fetch(`${process.env.NEXT_PUBLIC_NEXT_SERVER_URL}/api/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -51,30 +56,27 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({
                     });
                     accessToken.value = rs.payload.access
                     refreshToken.value = rs.payload.refresh
+                    router.push(`/${lang}/`)
                 },
                 signUp: async (
                     username: string,
                     email: string,
                     password: string
                 ) => {
-                    http.post<{
-                        message: string;
-                        data: {
-                            email: string;
-                            username: string;
-                        }
-                    }>('/auth/register/', { username, password, email })
+                    http.post<HTTPResponseType>('/auth/register/', { username, password, email })
+                    router.push(`/${lang}/login`)
                 },
                 signOut: async () => {
-                    // Implement sign out logic
+                    console.log('signing out')
                     accessToken.value = "";
                     refreshToken.value = "";
-                    fetch(`${process.env.NEXT_PUBLIC_NEXTSERVER_URL}/api/auth/logout`, {
+                    await fetch(`${process.env.NEXT_PUBLIC_NEXT_SERVER_URL}/api/auth/logout`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                     });
+                    router.push(`/${lang}/login`)
                 },
             }}
         >

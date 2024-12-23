@@ -23,30 +23,26 @@ import { createSchemaFieldRule } from "antd-zod";
 import useToken from "antd/es/theme/useToken";
 import Title from "antd/es/typography/Title";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 function LoginForm() {
     const pathName = usePathname();
     const lang = pathName.split('/')[1];
     const i18n = useI18n(lang);
-    const router = useRouter();
     const token = useToken();
     const { Item } = Form;
     const [form] = Form.useForm();
     const rule = createSchemaFieldRule(loginFormSchema);
     const { signIn } = useAuth();
 
-
     const handleSubmit = useMutation({
         mutationFn: async (values: LoginFormType) => {
             try {
                 await signIn(values.username, values.password);
                 message.success(i18n.Message["Login successful"]);
-                router.push(`/${lang}/`);
             } catch (error: any) {
                 message.error(error.message);
             }
-
         }
     })
 

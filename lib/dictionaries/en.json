@@ -13,16 +13,27 @@
         "Failed to update workspace": "Failed to update workspace",
         "Failed to delete workspace": "Failed to delete workspace",
         "Please enter the workspace name": "Please enter the workspace name",
+        "Please enter the card title": "Please enter the card title",
+        "Please enter the card description": "Please enter the card description",
         "Workspace name does not match": "Workspace name does not match",
         "This user is already in the list": "This user is already in the list",
-        "Task already exists or empty": "Task already exists or empty"
+        "Task already exists or empty": "Task already exists or empty",
+        "Request sent successfully": "Request sent successfully",
+        "Leave workspace successfully": "Leave workspace successfully",
+        "Column added successfully": "Column added successfully",
+        "Column deleted successfully": "Column deleted successfully",
+        "Card added successfully": "Card added successfully",
+        "Failed to add column": "Failed to add column",
+        "Failed to delete column": "Failed to delete column",
+        "Failed to move column": "Failed to move column",
+        "Failed to add card": "Failed to add card",
+        "Failed to move card": "Failed to move card"
     },
     "Common": {
         "Home": "Home",
         "Logout": "Logout",
         "Sign in": "Sign in",
         "Register": "Register",
-        "Email": "Email",
         "Password": "Password",
         "Or": "Or",
         "Sign in with": "Sign in with",
@@ -50,7 +61,26 @@
         "Completed": "Completed",
         "In progress": "In progress",
         "Search": "Search",
-        "Username": "Username"
+        "Username": "Username",
+        "Edit Profile": "Edit Profile",
+        "Account": "Account",
+        "Dark mode": "Dark mode",
+        "Light mode": "Light mode",
+        "Name": "Name",
+        "Email": "Email",
+        "Appearance": "Appearance",
+        "Theme": "Theme",
+        "Profile picture": "Profile picture",
+        "Requests": "Requests",
+        "Send request": "Send request",
+        "Sended": "Sended",
+        "Accepted": "Accepted",
+        "Rejected": "Rejected",
+        "Today": "Today",
+        "Tomorrow": "Tomorrow",
+        "This week": "This week",
+        "This month": "This month",
+        "Overdue": "Overdue"
     },
     "LoginForm": {
         "No account?": "No account?",
@@ -79,12 +109,15 @@
         "Delete Workspace description": "Deleting a workspace is irreversible. Please type the name of the workspace to confirm",
         "Add members": "Add members",
         "Members": "Members",
-        "Search by email": "Search by email"
+        "Search by email": "Search by email",
+        "Leave workspace": "Leave workspace",
+        "Workspace information": "Workspace information"
     },
     "Column": {
         "Delete column": "Delete column",
         "Edit column": "Edit column",
-        "Add column": "Add column"
+        "Add column": "Add column",
+        "Drag and drop to add column": "Drag and drop to add column"
     },
     "Card": {
         "Add card": "Add card",
@@ -95,6 +128,17 @@
         "Not assign yet": "Not assign yet",
         "Due date": "Due date",
         "Tasks": "Tasks",
-        "Add task": "Add task"
+        "Add task": "Add task",
+        "Edit card description": "Edit card description",
+        "Edit card due date": "Edit card due date",
+        "Filter by members":    "Filter by members",
+        "Filter by due date": "Filter by due date",
+        "Filter by card name": "Filter by card name",
+        "Filter by tag name": "Filter by tag name"
+    },
+    "Language": {
+        "Language": "Language",
+        "en": "English",
+        "vi": "Vietnamese"
     }
 }

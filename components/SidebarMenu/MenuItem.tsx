@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { MenuItemType } from './SidebarMenu';
 import useToken from 'antd/es/theme/useToken';
 import { Typography } from 'antd';
+import { cn } from '@/lib/utils';
 
 interface MenuItemProps {
     item: MenuItemType;
@@ -30,8 +31,7 @@ function MenuItem({
                 onPress?.(item.key!, e);
             }}
             className={`flex items-center p-2 cursor-pointer rounded mt-1 ${item.disabled ? "opacity-50" : ""
-                } ${inlineCollapsed ? "justify-center" : "justify-start"
-                }`}
+                } ${inlineCollapsed ? "justify-center" : "justify-start"} flex-nowrap`}
             style={{
                 backgroundColor: active
                     ? token[3].colorPrimaryBg : hover
@@ -44,15 +44,16 @@ function MenuItem({
                     {item.icon}
                 </Typography.Text>
             )}
-            <span
-                className={`${inlineCollapsed ? "hidden" : "inline"
-                    } ml-2`}
+            <Typography.Text
+                className={cn('ml-2 text-nowrap transition-all', {
+                    'w-0 overflow-hidden ml-0': inlineCollapsed,
+                })}
                 style={{
                     color: token[3].colorText,
                 }}
             >
                 {item.label}
-            </span>
+            </Typography.Text>
         </li>
     )
 }

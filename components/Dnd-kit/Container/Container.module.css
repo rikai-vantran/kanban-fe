@@ -1,0 +1,25 @@
+.Container ul {
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(var(--columns, 1), 1fr);
+  list-style: none;
+  padding: 8px;
+  margin: 0;
+}
+
+.Container.scrollable ul {
+  overflow-y: auto;
+}
+
+.Container.horizontal {
+  width: 100%;
+}
+
+.Container.horizontal ul {
+  grid-auto-flow: column;
+}
+
+.Container:focus-visible {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0), 0 0px 0px 2px #4c9ffe;
+}

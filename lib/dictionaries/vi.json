@@ -13,16 +13,27 @@
         "Failed to update workspace": "Cập nhật không gian làm việc thất bại",
         "Failed to delete workspace": "Xóa không gian làm việc thất bại",
         "Please enter the workspace name": "Vui lòng nhập tên của không gian làm việc",
+        "Please enter the card description": "Vui lòng nhập mô tả của thẻ",
+        "Please enter the card title": "Vui lòng nhập tiêu đề của thẻ",
         "Workspace name does not match": "Tên không gian làm việc không khớp",
         "This user is already in the list": "Người dùng này đã có trong danh sách",
-        "Task already exists or empty": "Công việc đã tồn tại hoặc trống"
+        "Task already exists or empty": "Công việc đã tồn tại hoặc trống",
+        "Request sent successfully": "Gửi yêu cầu thành công",
+        "Leave workspace successfully": "Rời khỏi không gian làm việc thành công",
+        "Column added successfully": "Thêm cột thành công",
+        "Column deleted successfully": "Xóa cột thành công",
+        "Card added successfully": "Thêm thẻ thành công",
+        "Failed to add column": "Thêm cột thất bại",
+        "Failed to delete column": "Xóa cột thất bại",
+        "Failed to move column": "Di chuyển cột thất bại",
+        "Failed to add card": "Thêm thẻ thất bại",
+        "Failed to move card": "Di chuyển thẻ thất bại"
     },
     "Common": {
         "Home": "Trang chủ",
         "Logout": "Đăng xuất",
         "Sign in": "Đăng nhập",
         "Register": "Đăng ký",
-        "Email": "Email",
         "Password": "Mật khẩu",
         "Or": "Hoặc",
         "Sign in with": "Đăng nhập với",
@@ -50,7 +61,26 @@
         "Completed": "Hoàn thành",
         "In progress": "Đang tiến hành",
         "Search": "Tìm kiếm",
-        "Username": "Tên người dùng"
+        "Username": "Tên người dùng",
+        "Edit Profile": "Chỉnh sửa hồ sơ",
+        "Account": "Tài khoản",
+        "Dark mode": "Chế độ tối",
+        "Light mode": "Chế độ sáng",
+        "Name": "Tên người dùng",
+        "Email": "Email",
+        "Appearance": "Giao diện",
+        "Theme": "Chủ đề",
+        "Profile picture": "Ảnh đại diện",
+        "Requests": "Yêu cầu",
+        "Send request": "Gửi yêu cầu",
+        "Sended": "Đã gửi",
+        "Accepted": "Đã chấp nhận",
+        "Rejected": "Đã từ chối",
+        "Today": "Hôm nay",
+        "Tomorrow": "Ngày mai",
+        "This week": "Tuần này",
+        "This month": "Tháng này",
+        "Overdue": "Quá hạn"
     },
     "LoginForm": {
         "No account?": "Chưa có tài khoản?",
@@ -78,12 +108,15 @@
         "Delete Workspace description": "Xóa không gian làm việc là không thể đảo ngược. Vui lòng nhập tên của không gian làm việc để xác nhận",
         "Add members": "Thêm thành viên",
         "Members": "Thành viên",
-        "Search by email": "Tìm kiếm theo email"
+        "Search by email": "Tìm kiếm theo email",
+        "Leave workspace": "Rời khỏi không gian làm việc",
+        "Workspace information": "Thông tin không gian làm việc"
     },
     "Column": {
         "Delete column": "Xóa cột",
         "Edit column": "Chỉnh sửa cột",
-        "Add column": "Thêm cột"
+        "Add column": "Thêm cột",
+        "Drag and drop to add column": "Kéo và thả để thêm cột"
     },
     "Card": {
         "Add card": "Thêm thẻ",
@@ -94,6 +127,17 @@
         "Not assign yet": "Chưa giao",
         "Due date": "Hết hạn",
         "Tasks": "Công việc",
-        "Add task": "Thêm công việc"
+        "Add task": "Thêm công việc",
+        "Edit card description": "Chỉnh sửa mô tả thẻ",
+        "Edit card due date": "Chỉnh sửa hạn chót thẻ",
+        "Filter by members": "Lọc theo thành viên",
+        "Filter by due date": "Lọc theo hạn chót",
+        "Filter by card name": "Lọc theo tên thẻ",
+        "Filter by tag name": "Lọc theo tên thẻ"
+    },
+    "Language": {
+        "Language": "Ngôn ngữ",
+        "en": "Tiếng Anh",
+        "vi": "Tiếng Việt"
     }
 }

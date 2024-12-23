@@ -47,17 +47,18 @@ export default async function RootLayout({
                 <main>
                     <AntdRegistry>
                         <ThemeProvider>
-                            <ConfigProviderApp>
-                                <AuthProvider
-                                    access={access}
-                                    refresh={refresh}
-                                >
+                            <AuthProvider
+                                access={access}
+                                refresh={refresh}
+                            >
+                                <ConfigProviderApp>
+
                                     <I18nProvider
                                         dictionaryEN={dictionaryEN}
                                         dictionaryVI={dictionaryVI}
                                     >{children}</I18nProvider>
-                                </AuthProvider>
-                            </ConfigProviderApp>
+                                </ConfigProviderApp>
+                            </AuthProvider>
                         </ThemeProvider>
                     </AntdRegistry>
                 </main>

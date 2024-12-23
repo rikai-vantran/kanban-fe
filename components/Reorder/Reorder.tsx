@@ -4,7 +4,10 @@ import React from 'react'
 interface ReorderProps<T> {
     items: T[];
     onReorder: (items: T[]) => void;
-    renderItem: (item: T) => React.ReactNode;
+    renderItem: (item: T, index: number) => React.ReactNode;
+    styles?: React.CSSProperties;
+    itemStyles?: React.CSSProperties;
+    className?: string;
 }
 
 function ReorderComponent<T extends {
@@ -12,13 +15,16 @@ function ReorderComponent<T extends {
 }>({
     items,
     onReorder,
-    renderItem
+    renderItem,
+    itemStyles,
+    styles,
+    className=''
 }: ReorderProps<T>) {
     return (
-        <Reorder.Group<T> axis="y" values={items} onReorder={onReorder}>
-            {items.map((item) => (
-                <Reorder.Item key={item.key} value={item}>
-                    {renderItem(item)}
+        <Reorder.Group<T> axis="y" values={items} onReorder={onReorder} style={styles} className={className}>
+            {items.map((item, index) => (
+                <Reorder.Item key={item.key} value={item} style={itemStyles}>
+                    {renderItem(item, index)}
                 </Reorder.Item>
             ))}
         </Reorder.Group>

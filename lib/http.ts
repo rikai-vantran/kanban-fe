@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type CustomRequestInit = RequestInit & { baseUrl?: string };
 
-class HttpError<T> extends Error {
-    status: number;
-    payload: T;
-    constructor({ status, payload }: { status: number; payload: T }) {
-        super("Http Error");
-        this.status = status;
-        this.payload = payload;
-    }
+export interface HTTPResponseType {
+    message: string;
+    data: Record<string, any>[];
 }
 
 class AccessToken {
@@ -55,9 +50,7 @@ const request = async <Response>(
     if (accessToken.value) {
         headers['Authorization'] = `Bearer ${accessToken.value}`;
     }
-
     const baseUrl = options?.baseUrl || process.env.NEXT_PUBLIC_BASE_URL;
-
     const fullUrl = url.startsWith("/")
         ? `${baseUrl}${url}`
         : `${baseUrl}/${url}`;
@@ -72,21 +65,41 @@ const request = async <Response>(
     });
 
     const payload: Response = await response.json();
-    const data = {
+    if (response.status === 401) {
+        if (accessToken.value === "" || refreshToken.value === "") {
+            window.location.href = "/login";
+        }
+        // handle refresh token
+        const refreshResponse = await http.post<{access: string}>(
+            "/auth/refresh/",
+            {
+                refresh: refreshToken.value,
+            }
+        )
+        if (refreshResponse.status === 200) {
+            accessToken.value = refreshResponse.payload.access;
+            await fetch(`${process.env.NEXT_PUBLIC_NEXT_SERVER_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    access: refreshResponse.payload.access,
+                }),
+            });
+            return request(method, url, options);
+        } else {
+            // logout
+            accessToken.value = "";
+            refreshToken.value = "";
+            window.location.href = "/login";
+        }
+    }
+
+    return {
         status: response.status,
         payload,
     };
-
-    if (!response.ok) {
-        throw new HttpError(data);
-    }
-    if (["/auth/login", "/auth/register"].includes(url)) {
-        accessToken.value = (payload as any).data.token;
-    } else if ("/auth/logout".includes(url)) {
-        accessToken.value = "";
-    }
-
-    return data;
 };
 
 const http = {
@@ -109,10 +122,9 @@ const http = {
     },
     delete<Response>(
         url: string,
-        body: any,
         options?: Omit<CustomRequestInit, "body">,
     ) {
-        return request<Response>("DELETE", url, { ...options, body });
+        return request<Response>("DELETE", url, { ...options });
     },
 };
 

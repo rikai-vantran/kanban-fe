@@ -1,12 +1,27 @@
-import { Timestamp } from "firebase/firestore";
-import { UserDataType } from "./UserDataType";
+import { ProfileType } from "./ProfileType";
 
 export interface WorkSpaceType {
-    id?: string,
+    id: string,
     name: string,
-    members: string[],
-    requests: string[],
-    owner: UserDataType,
     icon_unified: string,
-    created_at?: Timestamp,
+    columns_orders?: string[],
+    created_at?: string,
+    members: ProfileType[]
 }
+
+export type ColumnType = {
+    id: string;
+    workspace: string;
+    name: string;
+    card_orders: string[];
+};
+
+export type CardType = {
+    id: string;
+    column: string;
+    name: string;
+    description: string;
+    image: string;
+    due_date: string;
+    assigns: ProfileType[];
+};

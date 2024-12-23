@@ -18,13 +18,12 @@ import { createSchemaFieldRule } from "antd-zod";
 import useToken from "antd/es/theme/useToken";
 import Title from "antd/es/typography/Title";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 function RegisterForm() {
     const pathName = usePathname();
     const lang = pathName.split('/')[1];
     const i18n = useI18n(lang);
-    const router = useRouter();
     const token = useToken();
     const rule = createSchemaFieldRule(signupFormSchema);
     const [form] = Form.useForm();
@@ -35,7 +34,6 @@ function RegisterForm() {
             try {
                 await signUp(values.username, values.email, values.password);
                 message.success(i18n.Message["User created successfully"]);
-                router.push(`/${lang}/login`);
             } catch (e: any) {
                 console.error(e)
                 message.error(`${i18n.Message['Failed to create user']}`);

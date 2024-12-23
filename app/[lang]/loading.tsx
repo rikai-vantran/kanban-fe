@@ -29,7 +29,7 @@ function Loading() {
             </Sider>
             <Layout>
                 <Header style={{ background: token[1].colorBgBase }} />
-                <Content className="h-screen flex justify-center items-center">
+                <Content className="h-full flex justify-center items-center">
                     <Spin size='large' />
                 </Content>
             </Layout>
