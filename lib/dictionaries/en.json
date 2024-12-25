@@ -111,7 +111,8 @@
         "Members": "Members",
         "Search by email": "Search by email",
         "Leave workspace": "Leave workspace",
-        "Workspace information": "Workspace information"
+        "Workspace information": "Workspace information",
+        "History": "History"
     },
     "Column": {
         "Delete column": "Delete column",

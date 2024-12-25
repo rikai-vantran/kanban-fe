@@ -110,7 +110,8 @@
         "Members": "Thành viên",
         "Search by email": "Tìm kiếm theo email",
         "Leave workspace": "Rời khỏi không gian làm việc",
-        "Workspace information": "Thông tin không gian làm việc"
+        "Workspace information": "Thông tin không gian làm việc",
+        "History": "Lịch sử"
     },
     "Column": {
         "Delete column": "Xóa cột",

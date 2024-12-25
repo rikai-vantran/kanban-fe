@@ -1,4 +1,4 @@
-import { ColumnType } from '@/types/WorkSpaceType';
+import { ColumnType } from "@/types/WorkSpaceType";
 import {
     CollisionDetection,
     DndContext,
@@ -14,27 +14,27 @@ import {
     pointerWithin,
     rectIntersection,
     useSensor,
-    useSensors
-} from '@dnd-kit/core';
+    useSensors,
+} from "@dnd-kit/core";
 import {
     SortableContext,
     arrayMove,
     horizontalListSortingStrategy,
-    verticalListSortingStrategy
-} from '@dnd-kit/sortable';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { Container, DroppableContainer } from '../Container/Container';
-import { Item, SortableItem } from '../Item/Item';
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Container, DroppableContainer } from "../Container/Container";
+import { Item, SortableItem } from "../Item/Item";
 
 // dnd kit config
-const PLACEHOLDER_ID = 'placeholder';
+const PLACEHOLDER_ID = "placeholder";
 const empty: UniqueIdentifier[] = [];
 const dropAnimation: DropAnimation = {
     sideEffects: defaultDropAnimationSideEffects({
         styles: {
             active: {
-                opacity: '0.5',
+                opacity: "0.5",
             },
         },
     }),
@@ -58,13 +58,16 @@ interface Props {
     onCreateContainer?: () => Promise<UniqueIdentifier>;
     onRemoveContainer?: (containerId: UniqueIdentifier) => Promise<void>;
     onCreateItem?: (containerId: UniqueIdentifier) => Promise<UniqueIdentifier>;
-    onItemOrdersChangeInSameContainer?: (containerId: UniqueIdentifier, items: UniqueIdentifier[]) => Promise<void>;
+    onItemOrdersChangeInSameContainer?: (
+        containerId: UniqueIdentifier,
+        items: UniqueIdentifier[],
+    ) => Promise<void>;
     onItemOrdersChangeCrossContainer?: (
         cardId: UniqueIdentifier,
         activeColumnId: UniqueIdentifier,
         cardOrdersActiveColumn: UniqueIdentifier[],
         overColumnId: UniqueIdentifier,
-        cardOrdersOverColumn: UniqueIdentifier[]
+        cardOrdersOverColumn: UniqueIdentifier[],
     ) => Promise<void>;
 }
 
@@ -82,7 +85,7 @@ export function MultipleContainers({
     onItemOrdersChangeInSameContainer,
     onCreateContainer,
     onRemoveContainer,
-    onCreateItem
+    onCreateItem,
 }: Props) {
     const [items, setItems] = useState<Items>(() => initialItems);
     useEffect(() => {
@@ -90,12 +93,13 @@ export function MultipleContainers({
         setContainers(Object.keys(initialItems) as UniqueIdentifier[]);
     }, [initialItems]);
     const [containers, setContainers] = useState(
-        Object.keys(items) as UniqueIdentifier[]
+        Object.keys(items) as UniqueIdentifier[],
     );
 
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const lastOverId = useRef<UniqueIdentifier | null>(null);
-    const activeContainerPreviousWhenDragItemCrossContainer = useRef<UniqueIdentifier | null>(null);
+    const activeContainerPreviousWhenDragItemCrossContainer =
+        useRef<UniqueIdentifier | null>(null);
     const recentlyMovedToNewContainer = useRef(false);
     const isSortingContainer =
         activeId != null ? containers.includes(activeId) : false;
@@ -106,7 +110,7 @@ export function MultipleContainers({
                 return closestCenter({
                     ...args,
                     droppableContainers: args.droppableContainers.filter(
-                        (container) => container.id in items
+                        (container) => container.id in items,
                     ),
                 });
             }
@@ -116,9 +120,9 @@ export function MultipleContainers({
             const intersections =
                 pointerIntersections.length > 0
                     ? // If there are droppables intersecting with the pointer, return those
-                    pointerIntersections
+                      pointerIntersections
                     : rectIntersection(args);
-            let overId = getFirstCollision(intersections, 'id');
+            let overId = getFirstCollision(intersections, "id");
 
             if (overId != null) {
                 if (overId in items) {
@@ -129,11 +133,12 @@ export function MultipleContainers({
                         // Return the closest droppable within that container
                         overId = closestCenter({
                             ...args,
-                            droppableContainers: args.droppableContainers.filter(
-                                (container) =>
-                                    container.id !== overId &&
-                                    containerItems.includes(container.id)
-                            ),
+                            droppableContainers:
+                                args.droppableContainers.filter(
+                                    (container) =>
+                                        container.id !== overId &&
+                                        containerItems.includes(container.id),
+                                ),
                         })[0]?.id;
                     }
                 }
@@ -154,19 +159,19 @@ export function MultipleContainers({
             // If no droppable is matched, return the last match
             return lastOverId.current ? [{ id: lastOverId.current }] : [];
         },
-        [activeId, items]
+        [activeId, items],
     );
     const sensors = useSensors(
         useSensor(MouseSensor, {
             activationConstraint: {
-                distance: 10
-            }
+                distance: 10,
+            },
         }),
         useSensor(TouchSensor, {
             activationConstraint: {
                 delay: 250,
-                tolerance: 5
-            }
+                tolerance: 5,
+            },
         }),
     );
     const findContainer = (id: UniqueIdentifier) => {
@@ -197,16 +202,22 @@ export function MultipleContainers({
                 // find containerId of active item
                 let activeContainer = findContainer(active.id);
                 if (!activeContainer) {
-                    activeContainer = containers.find((container) => items[container].includes(active.id));
+                    activeContainer = containers.find((container) =>
+                        items[container].includes(active.id),
+                    );
                 }
-                activeContainerPreviousWhenDragItemCrossContainer.current = activeContainer ?? null
-                console.log('setNull', activeContainerPreviousWhenDragItemCrossContainer.current)
+                activeContainerPreviousWhenDragItemCrossContainer.current =
+                    activeContainer ?? null;
+                console.log(
+                    "setNull",
+                    activeContainerPreviousWhenDragItemCrossContainer.current,
+                );
             }}
             onDragOver={({ active, over }) => {
                 const overId = over?.id;
 
                 if (overId == null || active.id in items) {
-                    console.log('return')
+                    console.log("return");
                     return;
                 }
 
@@ -218,48 +229,52 @@ export function MultipleContainers({
                 }
 
                 if (activeContainer !== overContainer) {
-                    setItems((items) => {
-                        const activeItems = items[activeContainer];
-                        const overItems = items[overContainer];
-                        const overIndex = overItems.indexOf(overId);
-                        const activeIndex = activeItems.indexOf(active.id);
+                    setTimeout(() => {
+                        setItems((items) => {
+                            const activeItems = items[activeContainer];
+                            const overItems = items[overContainer];
+                            const overIndex = overItems.indexOf(overId);
+                            const activeIndex = activeItems.indexOf(active.id);
 
-                        let newIndex: number;
-                        // ờ chắc là kéo card vào header của container khác 💀
-                        // thêm card vào đầu container
-                        if (overId in items) {
-                            newIndex = overItems.length + 1;
-                            // kéo card vào card khác khác container
-                        } else {
-                            const isBelowOverItem =
-                                over &&
-                                active.rect.current.translated &&
-                                active.rect.current.translated.top >
-                                over.rect.top + over.rect.height;
+                            let newIndex: number;
+                            // ờ chắc là kéo card vào header của container khác 💀
+                            // thêm card vào đầu container
+                            if (overId in items) {
+                                newIndex = overItems.length + 1;
+                                // kéo card vào card khác khác container
+                            } else {
+                                const isBelowOverItem =
+                                    over &&
+                                    active.rect.current.translated &&
+                                    active.rect.current.translated.top >
+                                        over.rect.top + over.rect.height;
 
-                            const modifier = isBelowOverItem ? 1 : 0;
+                                const modifier = isBelowOverItem ? 1 : 0;
 
-                            newIndex =
-                                overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-                        }
+                                newIndex =
+                                    overIndex >= 0
+                                        ? overIndex + modifier
+                                        : overItems.length + 1;
+                            }
 
-                        recentlyMovedToNewContainer.current = true;
+                            recentlyMovedToNewContainer.current = true;
 
-                        return {
-                            ...items,
-                            [activeContainer]: items[activeContainer].filter(
-                                (item) => item !== active.id
-                            ),
-                            [overContainer]: [
-                                ...items[overContainer].slice(0, newIndex),
-                                items[activeContainer][activeIndex],
-                                ...items[overContainer].slice(
-                                    newIndex,
-                                    items[overContainer].length
-                                ),
-                            ],
-                        };
-                    });
+                            return {
+                                ...items,
+                                [activeContainer]: items[
+                                    activeContainer
+                                ].filter((item) => item !== active.id),
+                                [overContainer]: [
+                                    ...items[overContainer].slice(0, newIndex),
+                                    items[activeContainer][activeIndex],
+                                    ...items[overContainer].slice(
+                                        newIndex,
+                                        items[overContainer].length,
+                                    ),
+                                ],
+                            };
+                        });
+                    }, 0);
                 }
             }}
             onDragEnd={({ active, over }) => {
@@ -268,7 +283,11 @@ export function MultipleContainers({
                     setContainers((containers) => {
                         const activeIndex = containers.indexOf(active.id);
                         const overIndex = containers.indexOf(over.id);
-                        const newContainers: UniqueIdentifier[] = arrayMove(containers, activeIndex, overIndex);
+                        const newContainers: UniqueIdentifier[] = arrayMove(
+                            containers,
+                            activeIndex,
+                            overIndex,
+                        );
                         onContainerOrdersChange?.(newContainers);
                         return newContainers;
                     });
@@ -323,59 +342,87 @@ export function MultipleContainers({
                 }
                 const overContainer = findContainer(overId);
                 if (overContainer) {
-                    const activeIndex = items[activeContainer].indexOf(active.id);
+                    const activeIndex = items[activeContainer].indexOf(
+                        active.id,
+                    );
                     const overIndex = items[overContainer].indexOf(overId);
-                    console.log('activeIndex', activeIndex)
-                    console.log('overIndex', overIndex)
+                    console.log("activeIndex", activeIndex);
+                    console.log("overIndex", overIndex);
                     if (activeIndex !== overIndex) {
                         setItems((items) => {
-                            console.log('items', items)
+                            console.log("items", items);
                             const newOverItemOrder = arrayMove(
                                 items[overContainer],
                                 activeIndex,
-                                overIndex
-                            )
-                            console.log(activeContainerPreviousWhenDragItemCrossContainer.current)
-                            if (activeContainerPreviousWhenDragItemCrossContainer.current && activeContainerPreviousWhenDragItemCrossContainer.current !== overContainer) {
-                                console.log('activeContainerPreviousWhenDragItemCrossContainer.current', activeContainerPreviousWhenDragItemCrossContainer.current)
+                                overIndex,
+                            );
+                            console.log(
+                                activeContainerPreviousWhenDragItemCrossContainer.current,
+                            );
+                            if (
+                                activeContainerPreviousWhenDragItemCrossContainer.current &&
+                                activeContainerPreviousWhenDragItemCrossContainer.current !==
+                                    overContainer
+                            ) {
+                                console.log(
+                                    "activeContainerPreviousWhenDragItemCrossContainer.current",
+                                    activeContainerPreviousWhenDragItemCrossContainer.current,
+                                );
                                 onItemOrdersChangeCrossContainer?.(
                                     active.id,
                                     activeContainerPreviousWhenDragItemCrossContainer.current,
-                                    items[activeContainerPreviousWhenDragItemCrossContainer.current],
+                                    items[
+                                        activeContainerPreviousWhenDragItemCrossContainer
+                                            .current
+                                    ],
                                     overContainer,
-                                    newOverItemOrder
-                                )
-                            }
-                            else {
-                                onItemOrdersChangeInSameContainer?.(overContainer, newOverItemOrder)
+                                    newOverItemOrder,
+                                );
+                            } else {
+                                onItemOrdersChangeInSameContainer?.(
+                                    overContainer,
+                                    newOverItemOrder,
+                                );
                             }
                             return {
                                 ...items,
                                 [overContainer]: newOverItemOrder,
-                            }
+                            };
                         });
-                    } else if (activeContainerPreviousWhenDragItemCrossContainer.current) {
-                        if (activeContainerPreviousWhenDragItemCrossContainer.current !== overContainer) {
-                            console.log('activeContainerPreviousWhenDragItemCrossContainer.current', activeContainerPreviousWhenDragItemCrossContainer.current)
+                    } else if (
+                        activeContainerPreviousWhenDragItemCrossContainer.current
+                    ) {
+                        if (
+                            activeContainerPreviousWhenDragItemCrossContainer.current !==
+                            overContainer
+                        ) {
+                            console.log(
+                                "activeContainerPreviousWhenDragItemCrossContainer.current",
+                                activeContainerPreviousWhenDragItemCrossContainer.current,
+                            );
                             onItemOrdersChangeCrossContainer?.(
                                 active.id,
                                 activeContainerPreviousWhenDragItemCrossContainer.current,
-                                items[activeContainerPreviousWhenDragItemCrossContainer.current],
+                                items[
+                                    activeContainerPreviousWhenDragItemCrossContainer
+                                        .current
+                                ],
                                 overContainer,
-                                items[overContainer]
-                            )
+                                items[overContainer],
+                            );
                         }
                     }
                 }
                 setActiveId(null);
-            }}>
+            }}
+        >
             <div
                 style={{
-                    display: 'inline-grid',
-                    boxSizing: 'border-box',
-                    gridAutoFlow: 'column',
+                    display: "inline-grid",
+                    boxSizing: "border-box",
+                    gridAutoFlow: "column",
                     gap: 12,
-                    height: '100%',
+                    height: "100%",
                 }}
             >
                 <SortableContext
@@ -386,13 +433,20 @@ export function MultipleContainers({
                         <DroppableContainer
                             key={containerId}
                             id={containerId}
-                            label={`${columns.find(column => column.id === containerId)?.name}`}
+                            label={`${
+                                columns.find(
+                                    (column) => column.id === containerId,
+                                )?.name
+                            }`}
                             items={items[containerId]}
                             onRemoveContainer={onRemoveContainer}
                             renderContainerOptions={renderContainerOptions}
                             onCreateItem={onCreateItem}
                         >
-                            <SortableContext items={items[containerId]} strategy={verticalListSortingStrategy}>
+                            <SortableContext
+                                items={items[containerId]}
+                                strategy={verticalListSortingStrategy}
+                            >
                                 {items[containerId].map((value, index) => {
                                     return (
                                         <SortableItem
@@ -419,9 +473,11 @@ export function MultipleContainers({
                         wrapperStyle={placeholderWrapperStyle}
                         placeholder
                     >
-                        {renderPlaceholder ? renderPlaceholder(
-                            lastOverId.current === PLACEHOLDER_ID
-                        ) : '+ Add Column'}
+                        {renderPlaceholder
+                            ? renderPlaceholder(
+                                  lastOverId.current === PLACEHOLDER_ID,
+                              )
+                            : "+ Add Column"}
                     </DroppableContainer>
                 </SortableContext>
             </div>
@@ -433,17 +489,19 @@ export function MultipleContainers({
                             : renderSortableItemDragOverlay(activeId)
                         : null}
                 </DragOverlay>,
-                document.body
+                document.body,
             )}
         </DndContext>
     );
 
     function renderSortableItemDragOverlay(id: UniqueIdentifier) {
         return (
-            <Item
-                dragOverlay
-            >
-                {renderItemDragOverlay ? renderItemDragOverlay(id) : <div>{id}</div>}
+            <Item dragOverlay>
+                {renderItemDragOverlay ? (
+                    renderItemDragOverlay(id)
+                ) : (
+                    <div>{id}</div>
+                )}
             </Item>
         );
     }
@@ -451,19 +509,23 @@ export function MultipleContainers({
     function renderContainerDragOverlay(containerId: UniqueIdentifier) {
         return (
             <Container
-                label={`${columns.find(column => column.id === containerId)?.name}`}
+                label={`${
+                    columns.find((column) => column.id === containerId)?.name
+                }`}
                 style={{
-                    height: '100%',
+                    height: "100%",
                 }}
                 id={containerId.toString()}
                 renderContainerOptions={renderContainerOptions}
                 dragging
             >
                 {items[containerId].map((item) => (
-                    <Item
-                        key={item}
-                    >
-                        {renderItemDragOverlay ? renderItemDragOverlay(item) : <div>{item}</div>}
+                    <Item key={item}>
+                        {renderItemDragOverlay ? (
+                            renderItemDragOverlay(item)
+                        ) : (
+                            <div>{item}</div>
+                        )}
                     </Item>
                 ))}
             </Container>

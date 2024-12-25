@@ -16,7 +16,7 @@ export const addWorkSpace = async (name: string, icon_unified: string) => {
     }>("api/workspaces/", {
         name,
         icon_unified
-    }) 
+    })
 }
 
 export const deleteWorkspace = async (id: string) => {
@@ -67,6 +67,11 @@ export const getRequestsPending = async (id: string) => {
 
 export const leaveWorkspace = async (id: string) => {
     const rs = await http.delete(`api/workspaces/${id}/members/`)
+    return rs.payload
+}
+
+export const logsWorkspace = async (id: string) => {
+    const rs = await http.get(`api/workspaces/${id}/logs/`)
     return rs.payload
 }
 

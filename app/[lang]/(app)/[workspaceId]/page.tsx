@@ -331,7 +331,7 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
                         arrow={false}
                         trigger={'click'}
                         content={
-                            <PopoverFilter 
+                            <PopoverFilter
                                 workspace={workspace.data!}
                             />
                         }

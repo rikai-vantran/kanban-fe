@@ -22,16 +22,16 @@ function CardItem({ card, members }: CardItemProps) {
         'tagname': 'To do',
         'color': '#0AAAF4'
     }
-    
+
     return (
         <motion.div className='py-2 px-3 overflow-x-hidden cursor-pointer'>
             <Space direction="vertical" className='w-full' onClick={() => {
                 setOpenModalEditCard(true)
             }}>
-                <RenderIf condition={card.image !== null}>
+                <RenderIf condition={true}>
                     <div className='w-full'>
                         <Image
-                            src={card.image}
+                            src={'https://firebasestorage.googleapis.com/v0/b/plantsnap-419307.appspot.com/o/468277130_1350962096283506_1049124470673556314_n.jpg?alt=media&token=1f19aab6-7060-440b-894a-4ec75625de43'}
                             alt="image"
                             className="rounded-md"
                             width={0} height={0}
