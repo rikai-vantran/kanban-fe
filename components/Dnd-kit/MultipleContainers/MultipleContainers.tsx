@@ -66,6 +66,7 @@ interface Props {
         overColumnId: UniqueIdentifier,
         cardOrdersOverColumn: UniqueIdentifier[]
     ) => Promise<void>;
+    onEditContainer?: (containerId: UniqueIdentifier, name: string) => Promise<void>;
 }
 
 export function MultipleContainers({
@@ -82,9 +83,12 @@ export function MultipleContainers({
     onItemOrdersChangeInSameContainer,
     onCreateContainer,
     onRemoveContainer,
-    onCreateItem
+    onCreateItem,
+    onEditContainer
 }: Props) {
     const [items, setItems] = useState<Items>(() => initialItems);
+    console.log('multiple container', items)
+
     useEffect(() => {
         setItems(initialItems);
         setContainers(Object.keys(initialItems) as UniqueIdentifier[]);
@@ -203,6 +207,7 @@ export function MultipleContainers({
                 console.log('setNull', activeContainerPreviousWhenDragItemCrossContainer.current)
             }}
             onDragOver={({ active, over }) => {
+                console.log('onDragOver')
                 const overId = over?.id;
 
                 if (overId == null || active.id in items) {
@@ -225,8 +230,6 @@ export function MultipleContainers({
                         const activeIndex = activeItems.indexOf(active.id);
 
                         let newIndex: number;
-                        // ờ chắc là kéo card vào header của container khác 💀
-                        // thêm card vào đầu container
                         if (overId in items) {
                             newIndex = overItems.length + 1;
                             // kéo card vào card khác khác container
@@ -374,8 +377,8 @@ export function MultipleContainers({
                     display: 'inline-grid',
                     boxSizing: 'border-box',
                     gridAutoFlow: 'column',
-                    gap: 12,
-                    height: '100%',
+                    gap: 16,
+                    height: 'calc(100% - 32px)'
                 }}
             >
                 <SortableContext
@@ -391,6 +394,7 @@ export function MultipleContainers({
                             onRemoveContainer={onRemoveContainer}
                             renderContainerOptions={renderContainerOptions}
                             onCreateItem={onCreateItem}
+                            onEditContainer={onEditContainer}
                         >
                             <SortableContext items={items[containerId]} strategy={verticalListSortingStrategy}>
                                 {items[containerId].map((value, index) => {

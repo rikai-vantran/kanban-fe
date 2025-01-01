@@ -23,11 +23,17 @@
         "Column added successfully": "Thêm cột thành công",
         "Column deleted successfully": "Xóa cột thành công",
         "Card added successfully": "Thêm thẻ thành công",
+        "Card deleted successfully": "Xóa thẻ thành công",
         "Failed to add column": "Thêm cột thất bại",
         "Failed to delete column": "Xóa cột thất bại",
         "Failed to move column": "Di chuyển cột thất bại",
         "Failed to add card": "Thêm thẻ thất bại",
-        "Failed to move card": "Di chuyển thẻ thất bại"
+        "Failed to move card": "Di chuyển thẻ thất bại",
+        "Card updated successfully": "Cập nhật thẻ thành công",
+        "Label deleted successfully": "Xóa nhãn thành công",
+        "Label added successfully": "Thêm nhãn thành công",
+        "Label updated successfully": "Cập nhật nhãn thành công",
+        "Are you sure you want to delete this card?": "Bạn có chắc chắn muốn xóa thẻ này không?"
     },
     "Common": {
         "Home": "Trang chủ",
@@ -80,7 +86,23 @@
         "Tomorrow": "Ngày mai",
         "This week": "Tuần này",
         "This month": "Tháng này",
-        "Overdue": "Quá hạn"
+        "Overdue": "Quá hạn",
+        "Menu": "Menu",
+        "Activity": "Hoạt động",
+        "Label": "Nhãn",
+        "Automation": "Tự động hóa",
+        "Scheduled": "Lập lịch",
+        "Change image": "Thay đổi ảnh",
+        "Remove image": "Xóa ảnh",
+        "Save": "Lưu",
+        "Leave": "Rời khỏi",
+        "Members":"Thành viên",
+        "Title": "Tiêu đề",
+        "Pick a color": "Chọn một màu",
+        "Add label": "Thêm nhãn",
+        "Join": "Tham gia",
+        "Done": "Hoàn thành",
+        "Not done": "Chưa hoàn thành"
     },
     "LoginForm": {
         "No account?": "Chưa có tài khoản?",
@@ -110,7 +132,8 @@
         "Members": "Thành viên",
         "Search by email": "Tìm kiếm theo email",
         "Leave workspace": "Rời khỏi không gian làm việc",
-        "Workspace information": "Thông tin không gian làm việc"
+        "Workspace information": "Thông tin không gian làm việc",
+        "Create at": "Tạo lúc"
     },
     "Column": {
         "Delete column": "Xóa cột",
@@ -131,9 +154,15 @@
         "Edit card description": "Chỉnh sửa mô tả thẻ",
         "Edit card due date": "Chỉnh sửa hạn chót thẻ",
         "Filter by members": "Lọc theo thành viên",
-        "Filter by due date": "Lọc theo hạn chót",
+        "Filter by due date": "Lọc theo ngày hết hạn",
+        "Filter by label": "Lọc theo nhãn",
         "Filter by card name": "Lọc theo tên thẻ",
-        "Filter by tag name": "Lọc theo tên thẻ"
+        "Filter by tag name": "Lọc theo tên thẻ",
+        "Card title": "Tiêu đề thẻ",
+        "Short description": "Mô tả ngắn",
+        "Card description": "Mô tả thẻ",
+        "Task content": "Nội dung công việc",
+        "Add a more detailed description": "Thêm mô tả chi tiết hơn"
     },
     "Language": {
         "Language": "Ngôn ngữ",

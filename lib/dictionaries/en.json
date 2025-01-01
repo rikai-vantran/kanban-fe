@@ -23,11 +23,17 @@
         "Column added successfully": "Column added successfully",
         "Column deleted successfully": "Column deleted successfully",
         "Card added successfully": "Card added successfully",
+        "Card deleted successfully": "Card deleted successfully",
         "Failed to add column": "Failed to add column",
         "Failed to delete column": "Failed to delete column",
         "Failed to move column": "Failed to move column",
         "Failed to add card": "Failed to add card",
-        "Failed to move card": "Failed to move card"
+        "Failed to move card": "Failed to move card",
+        "Card updated successfully": "Card updated successfully",
+        "Label deleted successfully": "Label deleted successfully",
+        "Label added successfully": "Label added successfully",
+        "Label updated successfully": "Label updated successfully",
+        "Are you sure you want to delete this card?": "Are you sure you want to delete this card?"
     },
     "Common": {
         "Home": "Home",
@@ -80,7 +86,23 @@
         "Tomorrow": "Tomorrow",
         "This week": "This week",
         "This month": "This month",
-        "Overdue": "Overdue"
+        "Overdue": "Overdue",
+        "Menu": "Menu",
+        "Activity": "Activity",
+        "Label": "Label",
+        "Automation": "Automation",
+        "Scheduled": "Scheduled",
+        "Change image": "Change image",
+        "Remove image": "Remove image",
+        "Save": "Save",
+        "Leave": "Leave",
+        "Members":"Members",
+        "Title": "Title",
+        "Pick a color": "Pick a color",
+        "Add label": "Add label",
+        "Join": "Join",
+        "Done": "Done",
+        "Not done": "Not done"
     },
     "LoginForm": {
         "No account?": "No account?",
@@ -111,7 +133,8 @@
         "Members": "Members",
         "Search by email": "Search by email",
         "Leave workspace": "Leave workspace",
-        "Workspace information": "Workspace information"
+        "Workspace information": "Workspace information",
+        "Create at": "Create at"
     },
     "Column": {
         "Delete column": "Delete column",
@@ -133,8 +156,14 @@
         "Edit card due date": "Edit card due date",
         "Filter by members":    "Filter by members",
         "Filter by due date": "Filter by due date",
+        "Filter by label": "Filter by label",
         "Filter by card name": "Filter by card name",
-        "Filter by tag name": "Filter by tag name"
+        "Filter by tag name": "Filter by tag name",
+        "Card title": "Card title",
+        "Short description": "Short description",
+        "Card description": "Card description",
+        "Task content": "Task content",
+        "Add a more detailed description": "Add a more detailed description"
     },
     "Language": {
         "Language": "Language",

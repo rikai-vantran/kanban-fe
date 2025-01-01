@@ -82,6 +82,7 @@ export interface Props {
   dragging?: boolean;
   placeholder?: boolean;
   onClick?(): void;
+  onEditContainer?: (containerId: UniqueIdentifier, name: string) => Promise<void>;
 }
 // eslint-disable-next-line react/display-name
 export const Container = forwardRef<HTMLDivElement, Props>(
@@ -100,6 +101,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
       style,
       placeholder,
       dragging,
+      onEditContainer,
       ...props
     }: Props,
     ref
@@ -133,6 +135,8 @@ export const Container = forwardRef<HTMLDivElement, Props>(
           {
             borderRadius: 8,
             backgroundColor: token[3].colorBgLayout,
+            padding: 8,
+            boxShadow: '0 0 0 calc(1px / 1) rgba(63, 63, 68, 0.05), -1px 0 15px 0 rgba(34, 33, 81, 0.01), 0px 15px 15px 0 rgba(34, 33, 81, 0.25)',
             maxHeight: '100%',
             ...style,
             ...placeholder && placeholderStyle,
@@ -140,7 +144,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             ...wrapperStyle?.(hover || false),
           } as React.CSSProperties
         }
-        className={cn(`flex flex-col h-fit grid-auto-rows-max-content overflow-hidden min-w-[350px] transition-colors duration-350 ease-in-out
+        className={cn(`flex flex-col h-fit grid-auto-rows-max-content overflow-hidden w-[360px] transition-colors duration-350 ease-in-out
         `, {})}
         onClick={onClick}
         tabIndex={onClick ? 0 : undefined}
@@ -151,7 +155,15 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             width: '100%',
           }}>
             <div className='flex px-2 py-2 items-center w-full justify-between' {...handleProps}>
-              <Typography.Text className='pl-2'>{label}</Typography.Text>
+              <Typography.Text strong className='pl-2 flex-1'
+                editable={{
+                  onChange: (value) => {
+                    onEditContainer?.(id, value)
+                  },
+                  icon: <></>,
+                  triggerType: ['text']
+                }}
+              >{label}</Typography.Text>
               {renderContainerOptions ? (
                 <Popover
                   style={{
@@ -197,7 +209,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
               setIsCreatingItem(false);
             }} loading={isCreatingItem} type='primary' className='w-full' style={{
               backgroundColor: hover ? token[3].colorPrimaryActive : token[3].colorPrimary,
-            }} 
+            }}
             >
               <PlusCircleOutlined />
             </Button>

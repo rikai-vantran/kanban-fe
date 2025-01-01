@@ -1,7 +1,7 @@
 'use client'
-import { addCard, deleteCard, getCards, updateCard } from '@/api/card';
+import { addCard, getCards } from '@/api/card';
 import { addColumn, deleteColumn, getColumns, updateColumn } from '@/api/column';
-import { getWorkspace, updateWorkspace } from '@/api/workSpace';
+import { getWorkspace, moveCardCrossColumn, moveCardInTheSameColumn, updateWorkspace } from '@/api/workSpace';
 import RenderIf from '@/components/common/RenderIf/RenderIf';
 import { MultipleContainers } from '@/components/Dnd-kit/MultipleContainers/MultipleContainers';
 import { useI18n } from '@/contexts/i18n/i18nProvider';
@@ -16,7 +16,8 @@ import useToken from 'antd/es/theme/useToken';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import CardItem from './_component/CardItem';
-import DrawerWorkspaceInfo from './_component/DrawerWorkspaceInfo';
+import DrawerWorkspaceSettings from './_component/DrawerWorkspaceSettings/DrawerWorkspaceSettings';
+import ModalEditCard from './_component/ModalEditCard/ModalEditCard';
 import PopoverFilter from './_component/PopoverFilter';
 
 type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
@@ -59,8 +60,11 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
             return getCards(workspaceId)
         }
     })
+    // state
+    const [selectedCard, setSelectedCard] = useState<string>()
+    const [openModalEditCard, setOpenModalEditCard] = useState(false)
+
     useEffect(() => {
-        console.log('re-fetch')
         if (columnsQuery.data && cardsQuery.data && workspace.data && workspace.data.columns_orders) {
             const items: Items = {}
             const columnOrders = workspace.data.columns_orders
@@ -86,76 +90,6 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
     }, [columnsQuery.data, cardsQuery.data, workspace.data])
     const [items, setItems] = useState<Items>()
 
-    // Mutations
-    // const createCardMutation = useMutation({
-    //       mutationFn: async (columnId: string) => {
-    //         await addCard(
-    //           workspaceId,
-    //           columnId,
-    //           'New Card',
-    //           '',
-    //           new Date().toISOString().split('T')[0]
-    //         )
-    //       },
-    //       onSuccess: () => {
-    //         console.log('createCardMutation success')
-    //         queryClient.invalidateQueries({
-    //           queryKey: ['cards', workspaceId],
-    //         })
-    //         queryClient.invalidateQueries({
-    //           queryKey: ['columns', workspaceId],
-    //         })
-    //       }
-    //     })
-    const updateCardMutation = useMutation({
-        mutationKey: ['updateCard', workspaceId],
-        mutationFn: async (values: {
-            workspaceId: string;
-            columnId: string;
-            cardId: string;
-            name?: string;
-            description?: string;
-            due_date?: string;
-            column?: string;
-            assigns?: number[];
-        }) => {
-            await updateCard(
-                values.workspaceId,
-                values.columnId,
-                values.cardId,
-                values.name,
-                values.description,
-                values.due_date,
-                values.column,
-                values.assigns
-            )
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['cards', workspaceId],
-            })
-            queryClient.invalidateQueries({
-                queryKey: ['columns', workspaceId],
-            })
-        }
-    })
-    const deleteCardMutation = useMutation({
-        mutationKey: ['removeCard', workspaceId],
-        mutationFn: async (values: {
-            containerId: string;
-            cardId: string
-        }) => {
-            await deleteCard(workspaceId, values.containerId, values.cardId);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['cards', workspaceId],
-            })
-            queryClient.invalidateQueries({
-                queryKey: ['columns', workspaceId],
-            })
-        }
-    })
     // Columns Mutations
     const createColumnMutation = useMutation({
         mutationKey: ['createColumn', workspaceId],
@@ -174,6 +108,22 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
             columnsQuery.refetch()
             workspace.refetch()
         }
+    })
+    const updateColumnMutation = useMutation({
+        mutationKey: ['updateColumn', workspaceId],
+        mutationFn: async (values: {
+            columnId: UniqueIdentifier;
+            name: string;
+        }) => {
+            await updateColumn(
+                workspaceId,
+                values.columnId.toString(),
+                values.name
+            )
+        },
+        onSuccess: () => {
+            columnsQuery.refetch()
+        },
     })
     const deleteColumnMutation = useMutation({
         mutationKey: ['removeColumn', workspaceId],
@@ -219,7 +169,7 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
     const createCardMutation = useMutation({
         mutationKey: ['createCard', workspaceId],
         mutationFn: async (columnId: string) => {
-            const rs = await addCard(workspaceId, columnId, 'New Card', '', new Date().toISOString().split('T')[0]);
+            const rs = await addCard(workspaceId, columnId, 'New Card', '', '', undefined);
             return rs.id as UniqueIdentifier;
         },
         onSuccess: () => {
@@ -239,7 +189,11 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
             columnId: string;
             card_orders: string[];
         }) => {
-            await updateColumn(workspaceId, values.columnId, undefined, values.card_orders);
+            await moveCardInTheSameColumn(
+                workspaceId,
+                values.columnId,
+                values.card_orders
+            )
         },
         onSuccess: () => {
             columnsQuery.refetch()
@@ -254,9 +208,14 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
             overColumnId: string;
             cardOrdersOverColumn: string[];
         }) => {
-            await updateCard(workspaceId, values.activeColumnId, values.cardId, undefined, undefined, undefined, values.overColumnId)
-            updateColumn(workspaceId, values.activeColumnId, undefined, values.cardOrdersActiveColumn);
-            updateColumn(workspaceId, values.overColumnId, undefined, values.cardOrdersOverColumn);
+            await moveCardCrossColumn(
+                workspaceId,
+                values.overColumnId,
+                values.activeColumnId,
+                values.cardOrdersOverColumn,
+                values.cardOrdersActiveColumn,
+                values.cardId
+            )
         }
     })
 
@@ -267,7 +226,6 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
             <RenderIf condition={card !== undefined} style={{ width: '100%' }}>
                 <CardItem
                     card={card!}
-                    members={workspace.data!.members}
                 />
             </RenderIf>
         )
@@ -304,13 +262,13 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
                         }}>
                             {
                                 workspace.data?.members.map((member) => (
-                                    <Tooltip title={member.name} key={member.id}>
+                                    <Tooltip title={member.profile.name} key={member.profile.id}>
                                         <Avatar
-                                            key={member.id}
-                                            src={member.profile_pic.avatar === '' ? '/images/no_avatar.png' : member.profile_pic.avatar}
-                                            alt={member.name}
+                                            key={member.profile.id}
+                                            src={member.profile.profile_pic.avatar === '' ? '/images/no_avatar.png' : member.profile.profile_pic.avatar}
+                                            alt={member.profile.name}
                                         >
-                                            {member.name}
+                                            {member.profile.name}
                                         </Avatar>
                                     </Tooltip>
                                 ))
@@ -327,11 +285,11 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
                         />
                     </RenderIf>
                     <Popover
-                        placement='bottom'
+                        placement='bottomLeft'
                         arrow={false}
                         trigger={'click'}
                         content={
-                            <PopoverFilter 
+                            <PopoverFilter
                                 workspace={workspace.data!}
                             />
                         }
@@ -357,33 +315,51 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
             <Content className='h-full overflow-x-auto scrollbar dark::scrollbarDark pt-3 px-2'
                 id='content-workspace'
                 ref={contentRef}
-            // onPointerDown={(e) => {
-            //     console.log(e.currentTarget.id)
-            //     contentRef.current?.setPointerCapture(e.pointerId)
-            // }}
-            // onPointerUp={(e) => {
-            //     contentRef.current?.releasePointerCapture(e.pointerId)
-            // }}
-            // onPointerMove={(e) => {
-            //     return contentRef.current?.hasPointerCapture(e.pointerId) && (contentRef.current.scrollLeft -= e.movementX)
-            // }}
             >
                 <RenderIf condition={items !== undefined && columnsQuery.data !== undefined && cardsQuery.data !== undefined}
                     style={{ height: '100%' }}
                 >
+                    {/* // Modal Edit Card */}
+                    <RenderIf condition={Boolean(selectedCard)}>
+                        <ModalEditCard
+                            workspaceId={workspaceId}
+                            cardId={selectedCard}
+                            columnId={cardsQuery.data?.find((card) => card.id === selectedCard)?.column}
+                            onCancel={() => {
+                                setOpenModalEditCard(false)
+                            }}
+                            open={openModalEditCard}
+                        />
+                    </RenderIf>
+                    {/* // Modal Edit Card */}
                     <MultipleContainers
                         columns={columnsQuery.data!}
                         renderItemDragOverlay={renderItemDragOverlay}
-                        renderItem={(containerId, itemId) => {
-                            const card = cardsQuery.data?.find((card) => card.id === itemId)
-                            return (
-                                <RenderIf condition={card !== undefined} style={{ width: '100%' }}>
-                                    <CardItem
-                                        card={card!}
-                                        members={workspace.data!.members}
-                                    />
-                                </RenderIf>
-                            )
+                        onEditContainer={async (containerId, name) => {
+                            updateColumnMutation.mutateAsync({
+                                columnId: containerId,
+                                name: name
+                            })
+                        }}
+                        renderItem={
+                            (containerId, itemId) => {
+                                const card = cardsQuery.data?.find((card) => card.id === itemId)
+                                return (
+                                    <RenderIf condition={Boolean(card)} style={{ width: '100%' }}>
+                                        <CardItem
+                                            onClick={() => {
+                                                setSelectedCard(card.id)
+                                                setOpenModalEditCard(true)
+                                            }}
+                                            card={card!}
+                                        />
+                                    </RenderIf>
+                                )
+                            }}
+                        itemWrapperStyle={() => {
+                            return {
+                                borderRadius: 8
+                            }
                         }}
                         placeholderWrapperStyle={(isDraggingOver) => {
                             return {
@@ -392,6 +368,7 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
                                 borderColor: isDraggingOver ? token[3].colorPrimary : token[3].colorBorder,
                             }
                         }}
+                        // modal
                         renderPlaceholder={(isDraggingOver) => {
                             return (
                                 <Space direction='vertical'>
@@ -411,17 +388,6 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
                         renderContainerOptions={(containerId) => (
                             <Space direction="vertical">
                                 <Button
-                                    icon={<EditOutlined />}
-                                    type="text"
-                                    style={{
-                                        width: "100%",
-                                        display: "flex",
-                                        justifyContent: "flex-start",
-                                    }}
-                                >
-                                    {i18n.Column['Edit column']}
-                                </Button>
-                                <Button
                                     type="text"
                                     icon={<DeleteOutlined />}
                                     loading={deleteColumnMutation.isPending}
@@ -437,6 +403,7 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
                                 >
                                     {i18n.Column['Delete column']}
                                 </Button>
+
                             </Space>
                         )}
                         items={items!}
@@ -491,7 +458,7 @@ function KanbanBoard({ params: { workspaceId } }: Props) {
                 </RenderIf>
             </Content>
             {/* // Drawer Workspace Info */}
-            <DrawerWorkspaceInfo
+            <DrawerWorkspaceSettings
                 open={openDrawerWorkspaceInfo}
                 onClose={() => setOpenDrawerWorkspaceInfo(false)}
                 workspace={workspace.data!}

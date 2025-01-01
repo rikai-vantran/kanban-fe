@@ -1,5 +1,5 @@
 "use client";
-import { createContext, PropsWithChildren, useContext } from "react";
+import { createContext, PropsWithChildren, useContext, useEffect } from "react";
 import { useState } from "react";
 
 interface ThemeContextType {
@@ -10,13 +10,18 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 function ThemeProvider({ children }: PropsWithChildren) {
-    let localTheme: 'light' | 'dark' = localStorage.getItem("theme") as 'light' | 'dark';
-    if (!localTheme) {
-        localStorage.setItem("theme", "light");
-        localTheme = "light";
-    }
 
-    const [themeApp, setThemeApp] = useState<"light" | "dark">(localTheme);
+
+    const [themeApp, setThemeApp] = useState<"light" | "dark">('light');
+
+    useEffect(() => {
+        let localTheme: 'light' | 'dark' = localStorage.getItem("theme") as 'light' | 'dark';
+        if (!localTheme) {
+            localStorage.setItem("theme", "light");
+            localTheme = "light";
+        }
+        setThemeApp(localTheme);
+    }, [])
     return (
         <ThemeContext.Provider value={{
             themeApp,

@@ -17,7 +17,7 @@ function PopoverFilter({
     const token = useToken()
 
     return (
-        <Content className='w-72'>
+        <Content className='w-80'>
             <Space direction='vertical' className='w-full'>
                 <Row justify={'center'} className='w-full'>
                     <Typography.Title level={5}>{i18n.Common['Filter']}</Typography.Title>
@@ -33,12 +33,12 @@ function PopoverFilter({
                 <Typography.Text strong>{i18n.Card['Filter by members']}</Typography.Text>
                 <Space direction='vertical'>
                     {workspace.members.map((member) => (
-                        <Checkbox key={member.id}>
+                        <Checkbox key={member.profile.id}>
                             <Space>
-                                <Avatar src={member.profile_pic.avatar === '' ? "/images/no_avatar.png" : member.profile_pic.avatar} />
+                                <Avatar src={member.profile.profile_pic.avatar === '' ? "/images/no_avatar.png" : member.profile.profile_pic.avatar} />
                                 <div className='flex flex-col'>
-                                    <Typography.Text style={{ marginBottom: 0 }}>{member.name}</Typography.Text>
-                                    <Typography.Text type='secondary'>{member.email}</Typography.Text>
+                                    <Typography.Text style={{ marginBottom: 0 }}>{member.profile.name}</Typography.Text>
+                                    <Typography.Text type='secondary'>{member.profile.email}</Typography.Text>
                                 </div>
                             </Space>
                         </Checkbox>

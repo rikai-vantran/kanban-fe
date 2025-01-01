@@ -28,6 +28,7 @@ export const DeleteWorkspaceModal = ({
             onCancel();
         },
         onSuccess: () => {
+            console.log('delete workspace')
             queryClient.invalidateQueries({
                 queryKey: ['workspacesOwner'],
             })

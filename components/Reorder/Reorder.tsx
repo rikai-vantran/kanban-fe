@@ -21,7 +21,9 @@ function ReorderComponent<T extends {
     className=''
 }: ReorderProps<T>) {
     return (
-        <Reorder.Group<T> axis="y" values={items} onReorder={onReorder} style={styles} className={className}>
+        <Reorder.Group<T> axis="y" values={items} onReorder={onReorder} style={styles} className={className} onDragEnd={(event) => {
+            console.log(event)
+        }}>
             {items.map((item, index) => (
                 <Reorder.Item key={item.key} value={item} style={itemStyles}>
                     {renderItem(item, index)}

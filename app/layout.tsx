@@ -52,7 +52,6 @@ export default async function RootLayout({
                                 refresh={refresh}
                             >
                                 <ConfigProviderApp>
-
                                     <I18nProvider
                                         dictionaryEN={dictionaryEN}
                                         dictionaryVI={dictionaryVI}

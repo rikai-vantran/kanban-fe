@@ -35,8 +35,6 @@ export async function middleware(request: NextRequest) {
 
     if (pathnameHasLocale) {
         const pathWithoutLocale = pathname.split('/').slice(2).join('/')
-        console.log('!isPublicRoute(pathWithoutLocale)', !isPublicRoute(pathWithoutLocale))
-        console.log('!isLogin', !isLogin)
         if (!isPublicRoute(pathWithoutLocale) && !isLogin) {
             request.nextUrl.pathname = `/${pathname.split('/')[1]}/login`;
             return NextResponse.redirect(request.nextUrl);

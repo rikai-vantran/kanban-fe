@@ -4,8 +4,9 @@ import { useTheme } from "@/contexts/Theme/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConfigProvider, theme } from "antd";
 import React, { PropsWithChildren } from "react";
+import { StyleProvider } from '@ant-design/cssinjs';
 
-function ConfigProviderApp({children}: PropsWithChildren) {
+function ConfigProviderApp({ children }: PropsWithChildren) {
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
@@ -18,17 +19,19 @@ function ConfigProviderApp({children}: PropsWithChildren) {
             }
         }
     });
-    const {themeApp} = useTheme();
+    const { themeApp } = useTheme();
     return (
         <SocketProvider>
             <QueryClientProvider client={queryClient}>
-                <ConfigProvider
-                    theme={{
-                        algorithm: themeApp === 'light' ? theme.defaultAlgorithm : theme.darkAlgorithm,
-                    }}
-                >
-                    {children}
-                </ConfigProvider>
+                <StyleProvider layer>
+                    <ConfigProvider
+                        theme={{
+                            algorithm: themeApp === 'light' ? theme.defaultAlgorithm : theme.darkAlgorithm,
+                        }}
+                    >
+                        {children}
+                    </ConfigProvider>
+                </StyleProvider>
             </QueryClientProvider>
         </SocketProvider>
     )

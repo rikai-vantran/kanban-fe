@@ -137,7 +137,6 @@ export const Item = React.memo(
         )}
         style={
           {
-            backgroundColor: token[3].colorBgElevated,
             ...wrapperStyle,
             transition: [transition, wrapperStyle?.transition]
               .filter(Boolean)
@@ -171,7 +170,6 @@ export const Item = React.memo(
             color && styles.color
           )}
           style={{
-            backgroundColor: token[3].colorBgElevated,
             ...style,
           }}
           data-cypress="draggable-item"

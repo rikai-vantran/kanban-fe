@@ -1,6 +1,6 @@
 import http from "@/lib/http"
 import { ProfileType, RequestType } from "@/types/ProfileType"
-import { WorkSpaceType } from "@/types/WorkSpaceType"
+import { LabelType, WorkSpaceMemberType, WorkSpaceType } from "@/types/WorkSpaceType"
 
 export const getAllWorkSpaces = async (
     role: 'member' | 'owner'
@@ -10,13 +10,14 @@ export const getAllWorkSpaces = async (
 }
 
 export const addWorkSpace = async (name: string, icon_unified: string) => {
-    return http.post<{
+    const rs = await http.post<{
         message: string;
         data: WorkSpaceType;
     }>("api/workspaces/", {
         name,
         icon_unified
     }) 
+    return rs
 }
 
 export const deleteWorkspace = async (id: string) => {
@@ -37,26 +38,30 @@ export const getWorkspace = async (id: string) => {
         name: string;
         icon_unified: string;
         column_orders: string[];
-        created_at: string;
-        members: ProfileType[];
+        create_at: string;
+        members: WorkSpaceMemberType[];
+        labels: LabelType[];
     }>(`api/workspaces/${id}/`)
     return {
         id: rs.payload.id,
         name: rs.payload.name,
         icon_unified: rs.payload.icon_unified,
-        created_at: rs.payload.created_at,
-        members: rs.payload.members.map(member => {
-            return {
-                id: member.id,
-                name: member.name,
+        create_at: rs.payload.create_at,
+        members: rs.payload.members.map(member => ({
+            role: member.role,
+            profile: {
+                id: member.profile.id,
+                name: member.profile.name,
+                email: member.profile.email,
                 profile_pic: {
-                    name: member.profile_pic?.name ?? 'No Avatar',
-                    avatar: member.profile_pic?.avatar ?? '',
-                },
-                email: member.email,
+                    id: member.profile.profile_pic.id,
+                    name: member.profile.profile_pic.name,
+                    avatar: member.profile.profile_pic.avatar
+                }
             } as ProfileType
-        }),
+        })),
         columns_orders: rs.payload.column_orders,
+        labels: rs.payload.labels
     } as WorkSpaceType
 }
 
@@ -70,3 +75,48 @@ export const leaveWorkspace = async (id: string) => {
     return rs.payload
 }
 
+export const deleteLabel = async (id: string, label_id: number) => {
+    const rs = await http.delete(`api/workspaces/${id}/labels/${label_id}/`)
+    return rs.payload
+}
+
+export const addLabel = async (id: string, name: string, color: string) => {
+    const rs = await http.post(`api/workspaces/${id}/labels/`, {
+        name,
+        color
+    })
+    return rs.payload
+}
+
+export const updateLabel = async (id: string, label_id: number, name: string, color: string) => {
+    const rs = await http.put(`api/workspaces/${id}/labels/${label_id}/`, {
+        name,
+        color
+    })
+    return rs.payload
+}
+
+export const moveCardInTheSameColumn = async (id: string, column_id: string, card_orders: string[]) => {
+    const rs = await http.post(`api/workspaces/${id}/move-card-same-column/`, {
+        column_id,
+        card_orders
+    })
+    return rs.payload
+}
+
+export const moveCardCrossColumn = async (id: string,
+    pre_column_id: string,
+    next_column_id: string,
+    pre_card_orders: string[],
+    next_card_orders: string[],
+    card_id: string
+) => {
+    const rs = await http.post(`api/workspaces/${id}/move-card-cross-column/`, {
+        pre_column_id,
+        next_column_id,
+        pre_card_orders,
+        next_card_orders,
+        card_id,
+    })
+    return rs.payload
+}

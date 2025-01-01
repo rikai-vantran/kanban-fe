@@ -52,7 +52,7 @@ export const EditWorkspaceModal = ({
         queryKey: ['editWorkspaceSearchUser', searchUserDebounce],
         queryFn: async () => {
             const rs = await getProfiles(searchUserDebounce)
-            return rs.filter((profile) => !workspace.data?.members.find((member) => member.id === profile.id));
+            return rs.filter((profile) => !workspace.data?.members.find((member) => member.profile.id === profile.id));
         },
     })
     const sendRequestMutation = useMutation({
@@ -167,10 +167,10 @@ export const EditWorkspaceModal = ({
                             return (
                                 <List.Item
                                     actions={[
-                                        <RenderIf key={item.id} condition={item.id !== userQuery.data?.id}>
+                                        <RenderIf key={item.profile.id} condition={item.profile.id !== userQuery.data?.id}>
                                             <Button
                                                 onClick={() => {
-                                                    if (item.id === userQuery.data?.id) return;
+                                                    if (item.profile.id === userQuery.data?.id) return;
                                                     // setMembers((prev) => prev.filter((member) => member.id !== item.id));
                                                 }}>
                                                 {i18n.Common['Remove']}
@@ -182,16 +182,16 @@ export const EditWorkspaceModal = ({
                                         title={
                                             <Space>
                                                 <Typography.Text>
-                                                    {item.name}
+                                                    {item.profile.name}
                                                 </Typography.Text>
-                                                {item.id === userQuery.data?.id && <Tag>{`${i18n.Common['Owner']}`}</Tag>}
+                                                {item.profile.id === userQuery.data?.id && <Tag>{`${i18n.Common['Owner']}`}</Tag>}
                                             </Space>
                                         }
-                                        description={item.email}
+                                        description={item.profile.email}
                                         avatar={
                                             <Image height={36} width={36}
-                                                src={item.profile_pic.avatar === '' ? '/images/no_avatar.png' : item.profile_pic.avatar}
-                                                alt={item.name}
+                                                src={item.profile.profile_pic.avatar === '' ? '/images/no_avatar.png' : item.profile.profile_pic.avatar}
+                                                alt={item.profile.name}
                                                 style={{
                                                     borderRadius: "50%",
                                                 }} />

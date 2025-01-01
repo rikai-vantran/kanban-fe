@@ -1,12 +1,17 @@
 import { ProfileType } from "./ProfileType";
 
+export interface WorkSpaceMemberType {
+    role: "owner" | "member";
+    profile: ProfileType;
+}
 export interface WorkSpaceType {
-    id: string,
-    name: string,
-    icon_unified: string,
-    columns_orders?: string[],
-    created_at?: string,
-    members: ProfileType[]
+    id: string;
+    name: string;
+    icon_unified: string;
+    columns_orders?: string[];
+    create_at?: string;
+    members: WorkSpaceMemberType[];
+    labels: LabelType[];
 }
 
 export type ColumnType = {
@@ -20,8 +25,24 @@ export type CardType = {
     id: string;
     column: string;
     name: string;
+    short_description: string;
     description: string;
-    image: string;
+    image: string | null;
     due_date: string;
     assigns: ProfileType[];
+    labels: LabelType[];
+    tasks: TaskType[];
 };
+
+export interface LabelType {
+    id?: number;
+    name: string;
+    color: string;
+}
+
+export interface TaskType {
+    id: number;
+    content: string;
+    status: boolean;
+    card: string;
+}
