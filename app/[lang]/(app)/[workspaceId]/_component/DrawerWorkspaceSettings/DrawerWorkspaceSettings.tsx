@@ -5,6 +5,7 @@ import { Drawer, Tabs } from 'antd';
 import { usePathname } from 'next/navigation';
 import WorkspaceInfo from './WorkspaceInfo';
 import WorkspaceLabel from './WorkspaceLabel';
+import WorkspaceLogs from './WorkspaceLogs';
 
 interface Props {
     open: boolean;
@@ -40,6 +41,7 @@ function DrawerWorkspaceSettings({
                         label: i18n.Common['Activity'],
                         icon: <AlignLeftOutlined />,
                         key: 'activity',
+                        children: <WorkspaceLogs workspace={workspace} />
                     },
                     {
                         key: 'label',

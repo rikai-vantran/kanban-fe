@@ -16,7 +16,7 @@ export const addWorkSpace = async (name: string, icon_unified: string) => {
     }>("api/workspaces/", {
         name,
         icon_unified
-    }) 
+    })
     return rs
 }
 
@@ -118,5 +118,25 @@ export const moveCardCrossColumn = async (id: string,
         next_card_orders,
         card_id,
     })
+    return rs.payload
+}
+
+export const logsWorkspace = async (id: string) => {
+    const rs = await http.get(`api/workspaces/${id}/logs/`)
+    return rs.payload
+}
+
+export const logsfilterWorkspace = async (id: string, type: string) => {
+    const rs = await http.get(`api/workspaces/${id}/logs/filter/?type=${type}`)
+    return rs.payload
+}
+
+export const logspaginationWorkspace = async (id: string, page_current: number, limit: number, type : string) => {
+    const rs = await http.get(`api/workspaces/${id}/logs/pagination/?page_current=${page_current}&limit=${limit}&type=${type}`)
+    return rs.payload
+}
+
+export const filterByDate = async (id: string, start_date: string, end_date: string) => {
+    const rs = await http.get(`api/workspaces/${id}/logs/filter_by_date/?start_date=${start_date}&end_date=${end_date}`)
     return rs.payload
 }
